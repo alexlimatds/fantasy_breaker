@@ -1,10 +1,13 @@
 import game, pygame, sys
 
-def run():
-  player = game.Player()
+def run(player_lives):
+  player = game.Player(player_lives)
   block = game.Block(10, 10)
+  ball = game.Ball()
+  t = player.rect.topleft
+  ball.rect.topleft = (t[0] + player.rect.width / 2, t[1] - 60)
   
-  all_sprites = pygame.sprite.Group([player, block])
+  all_sprites = pygame.sprite.Group([player, block, ball])
 
   while True:
     for event in pygame.event.get():
@@ -22,7 +25,7 @@ def run():
     game.clock.tick(45) # FPS
 
 def main():
-  run()
+  run(3)
 
 
 if __name__ == "__main__":
