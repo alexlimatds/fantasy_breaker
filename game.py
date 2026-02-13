@@ -6,6 +6,7 @@ import pygame
 # https://opengameart.org/content/roguelike-tiles-large-collection
 
 # Icons by Lorc: https://lorcblog.blogspot.com/
+# https://opengameart.org/content/dungeon-crawl-32x32-tiles
 
 class Block(pygame.sprite.Sprite):
   def __init__(self, x, y):
@@ -19,14 +20,25 @@ class Block(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
   def __init__(self, lives=0):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.Surface([50, 10])
-    self.image.fill((0, 255, 255))
-    self.rect = self.image.get_rect()  
+    self.image = pygame.image.load('assets/player01.png').convert_alpha()
+    self.rect = self.image.get_rect()
+    self.mask = pygame.mask.from_surface(self.image)
     self.rect.topleft = (
       SCREEN_WIDHT / 2 - BLOCK_WIDHT / 2, 
       SCREEN_HEIGHT - BLOCK_HEIGHT - 10
     )
     self.lives = lives
+    self.speed = 7
+
+  def move_left(self):
+    self.rect.x -= self.speed
+  
+  def move_right(self):
+    self.rect.x += self.speed
+
+  def check_bump(self, ball):
+    hitted_edges = pygame.sprite.spritecollide(ball, self, False, pygame.sprite.collide_mask)
+    
 
 class Ball(pygame.sprite.Sprite):
   def __init__(self):
