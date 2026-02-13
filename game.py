@@ -35,15 +35,41 @@ class Ball(pygame.sprite.Sprite):
     self.image = pygame.transform.scale(img, (BALL_SIZE, BALL_SIZE))
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
+    self.x_direction = 1   # 1 for right, -1 for left
+    self.y_direction = -1  # 1 for down, -1 for up
+    self.speed = 5
+  
+  def update(self):
+    self.rect.left += self.speed * self.x_direction
+    self.rect.top += self.speed * self.y_direction
+      
+class Edge(pygame.sprite.Sprite):
+  def __init__(self, x, y, width, height):
+    pygame.sprite.Sprite.__init__(self)
+    self.image = pygame.Surface([width, height])
+    self.image.fill((0, 255, 255))
+    self.rect = self.image.get_rect()  
+    self.rect.topleft = (x, y)
 
 class Arena:
   # This class is used to check if an sprite reaches the edges of the screen
   def __init__(self):
-    self.left_edge = pygame.Rect(-1, 0, 1, SCREEN_HEIGHT)
+    self.left_edge = Edge(-1, 0, 1, SCREEN_HEIGHT)
+    self.right_edge = Edge(SCREEN_WIDHT + 1, 0, 1, SCREEN_HEIGHT)
+    self.top_edge = Edge(0, -1, SCREEN_WIDHT, 1)
+    self.edges = [self.left_edge, self.right_edge, self.top_edge]
   
-  def hit_edge(self, sprite):
-    pass
-    
+  def check_bump(self, ball):
+    hitted_edges = pygame.sprite.spritecollide(ball, self.edges, False, pygame.sprite.collide_mask)
+    if self.left_edge in hitted_edges or self.right_edge in hitted_edges:
+      ball.x_direction *= -1
+      ball.rect.left += ball.x_direction * 2
+    if self.top_edge in hitted_edges:
+      ball.y_direction *= -1
+      ball.rect.top += ball.y_direction * 2
+
+  def below_screen(self, sprite):
+    return sprite.rect.top > SCREEN_HEIGHT
 
 
 ### CONSTANTS ###

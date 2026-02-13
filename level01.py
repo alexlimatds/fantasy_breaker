@@ -1,6 +1,7 @@
 import game, pygame, sys
 
 def run(player_lives):
+  arena = game.Arena()
   player = game.Player(player_lives)
   block = game.Block(10, 10)
   ball = game.Ball()
@@ -16,7 +17,8 @@ def run(player_lives):
         sys.exit()
     
     ### GAME LOGIC ###
-
+    all_sprites.update()
+    arena.check_bump(ball)
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
