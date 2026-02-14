@@ -31,8 +31,13 @@ def run(player_lives):
   player = game.Player(player_lives)
   ball = game.Ball()
   game.center_player_and_ball(player, ball)
-  block = game.Block(10, 10)
-  all_sprites = pygame.sprite.Group([player, block, ball])
+  enemies = pygame.sprite.Group()
+  enemies.add(game.Goblin(75, 30))
+  enemies.add(game.Goblin(225, 30))
+  enemies.add(game.Goblin(375, 30))
+  enemies.add(game.Goblin(525, 30))
+  all_sprites = pygame.sprite.Group([player, ball])
+  all_sprites.add(enemies.sprites())
 
   start_time = pygame.time.get_ticks()
   while True:
@@ -101,6 +106,12 @@ def run(player_lives):
         else:
           ball.y_direction *= -1
           ball.x_direction *= -1
+      collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
+      for c in collided:
+        c.collide(ball)
+        if c.hit_points <= 0:
+          enemies.remove(c)
+          all_sprites.remove(c)
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))

@@ -17,6 +17,35 @@ class Block(pygame.sprite.Sprite):
     self.rect.topleft = (x, y)
     self.hit_points = 1
 
+class Goblin(pygame.sprite.Sprite):
+  def __init__(self, x, y):
+    pygame.sprite.Sprite.__init__(self)
+    self.idle_frames = [
+      pygame.image.load('assets/goblin_idle_frame_000.png').convert_alpha(), 
+      pygame.image.load('assets/goblin_idle_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/goblin_idle_frame_002.png').convert_alpha(), 
+      pygame.image.load('assets/goblin_idle_frame_003.png').convert_alpha()
+    ]
+    self.image = self.idle_frames[0]
+    self.rect = self.image.get_rect()  
+    self.mask = pygame.mask.from_surface(self.idle_frames[0])
+    self.rect.topleft = (x, y)
+    self.hit_points = 1
+    self.tick = 1
+    self.frame_count = 0
+
+  def update(self):
+    TICK_CHANGE = 6
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.idle_frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.idle_frames)
+    self.tick += 1
+  
+  def collide(self, ball):
+    ball.y_direction *= -1
+    self.hit_points -= 1
+
 class Player(pygame.sprite.Sprite):
   def __init__(self, lives=0):
     pygame.sprite.Sprite.__init__(self)
