@@ -95,9 +95,9 @@ def run(player_lives):
         game_state = LOST_LIFE
         lost_time = pygame.time.get_ticks()
       if collided and player.state == player.AURA:
-        if ball.rect.bottom < player.rect.top + 40:
+        if ball.rect.bottom < player.rect.top + 35:
           ball.y_direction *= -1
-          ball.rect.bottom -= 2
+          ball.rect.y -= 4
         else:
           ball.y_direction *= -1
           ball.x_direction *= -1
