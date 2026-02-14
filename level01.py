@@ -19,13 +19,20 @@ def run(player_lives):
       if event.type == pygame.QUIT:
         pygame.quit()
         sys.exit()
-    
-    if in_game:
-      pressed_keys = pygame.key.get_pressed()
-      if pressed_keys[pygame.K_LEFT]:
-        player.move_left()
-      if pressed_keys[pygame.K_RIGHT]:
-        player.move_right()
+      elif event.type == pygame.KEYDOWN:
+        if in_game:
+          if event.key == pygame.K_LEFT:
+            player.to_left()
+          if event.key == pygame.K_RIGHT:
+            player.to_right()
+          if event.key == pygame.K_UP:
+            player.to_aura()
+      elif event.type == pygame.KEYUP:
+        if in_game:
+          if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
+             (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT) or \
+             (event.key == pygame.K_UP and player.state == player.AURA):
+            player.to_idle()
 
     ### GAME LOGIC ###
     all_sprites.update()

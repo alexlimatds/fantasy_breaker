@@ -20,24 +20,101 @@ class Block(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
   def __init__(self, lives=0):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.image.load('assets/player01.png').convert_alpha()
+    self.running_left_frames = [
+      pygame.image.load('assets/player_run_left_frame_000.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_left_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_left_frame_002.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_left_frame_003.png').convert_alpha()
+    ]
+    self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
+    self.running_right_frames = [
+      pygame.image.load('assets/player_run_right_frame_000.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_right_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_right_frame_002.png').convert_alpha(), 
+      pygame.image.load('assets/player_run_right_frame_003.png').convert_alpha()
+    ]
+    self.running_right_masks = [pygame.mask.from_surface(img) for img in self.running_right_frames]
+    self.aura_frames = [
+      pygame.image.load('assets/player_aura_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/player_aura_frame_002.png').convert_alpha()
+    ]
+    self.aura_masks = [pygame.mask.from_surface(img) for img in self.aura_frames]
+    self.idle_frame = pygame.image.load('assets/player_idle.png').convert_alpha()
+    self.idle_mask = pygame.mask.from_surface(self.idle_frame)
+
+    self.image = self.idle_frame
     self.rect = self.image.get_rect()
-    self.mask = pygame.mask.from_surface(self.image)
+    self.mask = self.idle_mask
     self.rect.topleft = (
       SCREEN_WIDHT / 2 - BLOCK_WIDHT / 2, 
-      SCREEN_HEIGHT - BLOCK_HEIGHT - 10
+      SCREEN_HEIGHT - 65
     )
     self.lives = lives
     self.speed = 7
+    # state variables
+    self.IDLE = 0
+    self.RUNNING_LEFT = 1
+    self.RUNNING_RIGHT = 2
+    self.AURA = 3
+    self.state = self.IDLE
+    self.frame_count = 0
+    self.tick = 1
 
-  def move_left(self):
-    self.rect.x -= self.speed
+  def to_left(self):
+    self.state = self.RUNNING_LEFT
+    self.frame_count = 0
+    self.tick = 1
   
-  def move_right(self):
-    self.rect.x += self.speed
+  def to_right(self):
+    self.state = self.RUNNING_RIGHT
+    self.frame_count = 0
+    self.tick = 1
+
+  def to_idle(self):
+    self.state = self.IDLE
+    self.frame_count = 0
+    self.tick = 1
+  
+  def to_aura(self):
+    self.state = self.AURA
+    self.frame_count = 0
+    self.tick = 1
+  
+  def _adjust_position(self):
+    if self.rect.left < 0:
+      self.rect.left = 0
+    elif self.rect.right > SCREEN_WIDHT:
+      self.rect.right = SCREEN_WIDHT
+
+  def update(self):
+    TICK_CHANGE = 6
+    if self.state == self.IDLE:
+      self.image = self.idle_frame
+    elif self.state == self.RUNNING_LEFT:
+      self.rect.x -= self.speed
+      self._adjust_position()
+      if self.tick == TICK_CHANGE:
+        self.tick = 0
+        self.image = self.running_left_frames[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.running_left_frames)
+    elif self.state == self.RUNNING_RIGHT:
+      self.rect.x += self.speed
+      self._adjust_position()
+      if self.tick == TICK_CHANGE:
+        self.tick = 0
+        self.image = self.running_right_frames[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.running_right_frames)
+    elif self.state == self.AURA:
+      if self.tick == TICK_CHANGE:
+        self.tick = 0
+        self.image = self.aura_frames[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.aura_frames)
+    self.tick += 1
+    
 
   def check_bump(self, ball):
     hitted_edges = pygame.sprite.spritecollide(ball, self, False, pygame.sprite.collide_mask)
+    # TODO
     
 
 class Ball(pygame.sprite.Sprite):
