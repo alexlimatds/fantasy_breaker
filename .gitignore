@@ -1,0 +1,32 @@
+# Python
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Distribution / packaging
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# IDE-specific files (optional)
+.idea/  # For PyCharm
+.vscode/ # For VS Code
+*.swp
+*.bak
+*.log # Example log files
+
+# OS-specific files
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Sensitive files (e.g., credentials)
+.env
