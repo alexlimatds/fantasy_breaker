@@ -45,10 +45,6 @@ class Player(pygame.sprite.Sprite):
     self.image = self.idle_frame
     self.rect = self.image.get_rect()
     self.mask = self.idle_mask
-    self.rect.topleft = (
-      SCREEN_WIDHT / 2 - BLOCK_WIDHT / 2, 
-      SCREEN_HEIGHT - 65
-    )
     self.lives = lives
     self.speed = 7
     # state variables
@@ -153,6 +149,20 @@ class Arena:
 
   def below_screen(self, sprite):
     return sprite.rect.top > SCREEN_HEIGHT
+
+
+def center_player_and_ball(player, ball):
+  player.rect.topleft = (
+    SCREEN_WIDHT / 2 - BLOCK_WIDHT / 2, 
+    SCREEN_HEIGHT - 65
+  )
+  t = player.rect.topleft
+  ball.rect.topleft = (
+    t[0] + player.rect.width / 2, 
+    t[1] - 60
+  )
+  ball.x_direction = 1
+  ball.y_direction = -1
 
 
 ### CONSTANTS ###
