@@ -110,12 +110,6 @@ class Player(pygame.sprite.Sprite):
         self.image = self.aura_frames[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.aura_frames)
     self.tick += 1
-    
-
-  def check_bump(self, ball):
-    hitted_edges = pygame.sprite.spritecollide(ball, self, False, pygame.sprite.collide_mask)
-    # TODO
-    
 
 class Ball(pygame.sprite.Sprite):
   def __init__(self):
