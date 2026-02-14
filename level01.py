@@ -32,8 +32,6 @@ def run(player_lives):
   ball = game.Ball()
   game.center_player_and_ball(player, ball)
   block = game.Block(10, 10)
-  #t = player.rect.topleft
-  #ball.rect.topleft = (t[0] + player.rect.width / 2, t[1] - 60)
   all_sprites = pygame.sprite.Group([player, block, ball])
 
   start_time = pygame.time.get_ticks()
@@ -89,14 +87,20 @@ def run(player_lives):
       arena.check_bump(ball)
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
       bellow_screen = arena.below_screen(ball)
-      if collided or bellow_screen:
-        if (player.state != player.AURA or bellow_screen) and player.lives == 1:
-          player.lives = 0
-          game_state = GAME_OVER
-        elif (player.state != player.AURA or bellow_screen) and player.lives > 1:
-          player.lives -= 1
-          game_state = LOST_LIFE
-          lost_time = pygame.time.get_ticks()
+      if (player.state != player.AURA and collided or bellow_screen) and player.lives == 1:
+        player.lives = 0
+        game_state = GAME_OVER
+      elif (player.state != player.AURA and collided or bellow_screen) and player.lives > 1:
+        player.lives -= 1
+        game_state = LOST_LIFE
+        lost_time = pygame.time.get_ticks()
+      if collided and player.state == player.AURA:
+        if ball.rect.bottom < player.rect.top + 40:
+          ball.y_direction *= -1
+          ball.rect.bottom -= 2
+        else:
+          ball.y_direction *= -1
+          ball.x_direction *= -1
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
