@@ -35,8 +35,6 @@ def load_grid_images(sheet_file, width, height, columns, rows):
       images.append(img)
   return images
 
-
-
 def center_player_and_ball(player, ball):
   player.rect.topleft = (
     co.SCREEN_WIDHT / 2 - player.rect.w / 2, 
@@ -50,8 +48,14 @@ def center_player_and_ball(player, ball):
   ball.x_direction = 1
   ball.y_direction = -1
 
-
-
+def draw_msg(surface_txt, vertical_margin = 0):
+  screen.blit(
+    surface_txt, 
+    (
+      co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
+      co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
+    )
+  )
 
 ### INITIALIZATION ###
 pygame.init()

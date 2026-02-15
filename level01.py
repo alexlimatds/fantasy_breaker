@@ -2,15 +2,6 @@ import game, pygame, sys
 import constants as co
 import sprites
 
-def draw_msg(surface_txt, vertical_margin = 0):
-  game.screen.blit(
-    surface_txt, 
-    (
-      co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
-      co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
-    )
-  )
-
 def run(player_lives):
   ## VARIABLES ##
   IN_GAME = 0
@@ -120,14 +111,14 @@ def run(player_lives):
     game.screen.fill((0, 0, 0))
     all_sprites.draw(game.screen)
     if game_state == PAUSED:
-      draw_msg(txt_paused)
+      game.draw_msg(txt_paused)
     elif game_state == LOST_LIFE:
-      draw_msg(txt_lost)
+      game.draw_msg(txt_lost)
     elif game_state == GAME_OVER:
-      draw_msg(txt_game_over)
+      game.draw_msg(txt_game_over)
     elif game_state == ON_START:
-      draw_msg(txt_start_1)
-      draw_msg(txt_start_2, vertical_margin=30)
+      game.draw_msg(txt_start_1)
+      game.draw_msg(txt_start_2, vertical_margin=30)
     pygame.display.flip()
     game.clock.tick(45) # FPS
 
