@@ -1,5 +1,6 @@
 import game, pygame, sys
 import constants as co
+import sprites
 
 def draw_msg(surface_txt, vertical_margin = 0):
   game.screen.blit(
@@ -28,15 +29,15 @@ def run(player_lives):
   txt_lost = font_msgs.render("YOU HAVE LOST", True, 'red')
 
   ## SPRITES ##
-  arena = game.Arena()
-  player = game.Player(player_lives)
-  ball = game.Ball()
+  arena = sprites.Arena()
+  player = sprites.Player(player_lives)
+  ball = sprites.Ball()
   game.center_player_and_ball(player, ball)
   enemies = pygame.sprite.Group()
-  enemies.add(game.AmberGoblin(75, 30))
-  enemies.add(game.AmberGoblin(225, 30))
-  enemies.add(game.AmberGoblin(375, 30))
-  enemies.add(game.AmberGoblin(525, 30))
+  enemies.add(sprites.AmberGoblin(75, 30))
+  enemies.add(sprites.AmberGoblin(225, 30))
+  enemies.add(sprites.AmberGoblin(375, 30))
+  enemies.add(sprites.AmberGoblin(525, 30))
   all_sprites = pygame.sprite.Group([player, ball])
   all_sprites.add(enemies.sprites())
 
