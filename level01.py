@@ -1,11 +1,12 @@
 import game, pygame, sys
+import constants as co
 
 def draw_msg(surface_txt, vertical_margin = 0):
   game.screen.blit(
     surface_txt, 
     (
-      game.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
-      game.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
+      co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
+      co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
     )
   )
 
@@ -63,7 +64,7 @@ def run(player_lives):
           if event.key == pygame.K_p:
             game_state = IN_GAME
       player.update()
-      
+
     ### GAME LOGIC ###
     if game_state == ON_START:
       player.state = player.IDLE_RIGHT

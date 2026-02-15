@@ -1,4 +1,5 @@
 import pygame
+import constants as co
 
 # https://opengameart.org/content/700-rpg-icons
 # https://opengameart.org/content/dungeon-crawl-32x32-tiles
@@ -37,7 +38,7 @@ def load_grid_images(sheet_file, width, height, columns, rows):
 class Block(pygame.sprite.Sprite):
   def __init__(self, x, y):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.Surface([BLOCK_WIDHT, BLOCK_HEIGHT])
+    self.image = pygame.Surface([co.BLOCK_WIDHT, co.BLOCK_HEIGHT])
     self.image.fill((0, 255, 255))
     self.rect = self.image.get_rect()  
     self.rect.topleft = (x, y)
@@ -122,8 +123,8 @@ class Player(pygame.sprite.Sprite):
   def _adjust_position(self):
     if self.rect.left < 0:
       self.rect.left = 0
-    elif self.rect.right > SCREEN_WIDHT:
-      self.rect.right = SCREEN_WIDHT
+    elif self.rect.right > co.SCREEN_WIDHT:
+      self.rect.right = co.SCREEN_WIDHT
 
   def update(self):
     TICK_CHANGE = 6
@@ -161,7 +162,7 @@ class Ball(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
     img = pygame.image.load('assets/mace-head.png').convert_alpha()
-    self.image = pygame.transform.scale(img, (BALL_SIZE, BALL_SIZE))
+    self.image = pygame.transform.scale(img, (co.BALL_SIZE, co.BALL_SIZE))
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
     self.x_direction = 1   # 1 for right, -1 for left
@@ -183,9 +184,9 @@ class Edge(pygame.sprite.Sprite):
 class Arena:
   # This class is used to check if an sprite reaches the edges of the screen
   def __init__(self):
-    self.left_edge = Edge(-1, 0, 1, SCREEN_HEIGHT)
-    self.right_edge = Edge(SCREEN_WIDHT + 1, 0, 1, SCREEN_HEIGHT)
-    self.top_edge = Edge(0, -1, SCREEN_WIDHT, 1)
+    self.left_edge = Edge(-1, 0, 1, co.SCREEN_HEIGHT)
+    self.right_edge = Edge(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
+    self.top_edge = Edge(0, -1, co.SCREEN_WIDHT, 1)
     self.edges = [self.left_edge, self.right_edge, self.top_edge]
   
   def check_bump(self, ball):
@@ -198,13 +199,13 @@ class Arena:
       ball.rect.top += ball.y_direction * 2
 
   def below_screen(self, sprite):
-    return sprite.rect.top > SCREEN_HEIGHT
+    return sprite.rect.top > co.SCREEN_HEIGHT
 
 
 def center_player_and_ball(player, ball):
   player.rect.topleft = (
-    SCREEN_WIDHT / 2 - player.rect.w / 2, 
-    SCREEN_HEIGHT - player.rect.h - 5
+    co.SCREEN_WIDHT / 2 - player.rect.w / 2, 
+    co.SCREEN_HEIGHT - player.rect.h - 5
   )
   t = player.rect.topleft
   ball.rect.topleft = (
@@ -215,18 +216,11 @@ def center_player_and_ball(player, ball):
   ball.y_direction = -1
 
 
-### CONSTANTS ###
-SCREEN_WIDHT = 600
-SCREEN_HEIGHT = 600
 
-BLOCK_WIDHT = 50
-BLOCK_HEIGHT = 20
-
-BALL_SIZE = 40
 
 ### INITIALIZATION ###
 pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDHT, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
 pygame.display.set_caption("Fantasy Breaker")
 
 clock = pygame.time.Clock()
