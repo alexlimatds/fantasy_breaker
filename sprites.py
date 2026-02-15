@@ -139,7 +139,7 @@ class Ball(pygame.sprite.Sprite):
     self.rect.left += self.speed * self.x_direction
     self.rect.top += self.speed * self.y_direction
       
-class Edge(pygame.sprite.Sprite):
+class Boundary(pygame.sprite.Sprite):
   def __init__(self, x, y, width, height):
     pygame.sprite.Sprite.__init__(self)
     self.image = pygame.Surface([width, height])
@@ -148,11 +148,11 @@ class Edge(pygame.sprite.Sprite):
     self.rect.topleft = (x, y)
 
 class Arena:
-  # This class is used to check if an sprite reaches the edges of the screen
+  # This class is used to check if an sprite reaches the boundaries of the screen
   def __init__(self):
-    self.left_edge = Edge(-1, 0, 1, co.SCREEN_HEIGHT)
-    self.right_edge = Edge(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
-    self.top_edge = Edge(0, -1, co.SCREEN_WIDHT, 1)
+    self.left_edge = Boundary(-1, 0, 1, co.SCREEN_HEIGHT)
+    self.right_edge = Boundary(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
+    self.top_edge = Boundary(0, -1, co.SCREEN_WIDHT, 1)
     self.edges = [self.left_edge, self.right_edge, self.top_edge]
   
   def check_bump(self, ball):
