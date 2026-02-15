@@ -7,6 +7,28 @@ import pygame
 
 # Icons by Lorc: https://lorcblog.blogspot.com/
 # https://opengameart.org/content/dungeon-crawl-32x32-tiles
+# https://luizmelo.itch.io/monsters-creatures-fantasy
+
+def load_grid_images(sheet_file, width, height, columns, rows):
+  '''
+  Load frames/tiles from a sprite sheet.
+  
+  :param sheet: path of sheet file
+  :param width: frame's width
+  :param height: frame's height
+  :param columns: number of columns in the sheet
+  :param rows: number of rows in the sheet
+  '''
+  sheet_image = pygame.image.load(sheet_file).convert_alpha()
+  images = []
+  for row in range(rows):
+    for col in range(columns):
+      x = col * width
+      y = row * height
+      img = pygame.Surface([width, height], pygame.SRCALPHA)
+      img.blit(sheet_image, (0, 0), (x, y, width, height))
+      images.append(img)
+  return images
 
 class Block(pygame.sprite.Sprite):
   def __init__(self, x, y):
@@ -17,14 +39,14 @@ class Block(pygame.sprite.Sprite):
     self.rect.topleft = (x, y)
     self.hit_points = 1
 
-class Goblin(pygame.sprite.Sprite):
+class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, x, y):
     pygame.sprite.Sprite.__init__(self)
     self.idle_frames = [
-      pygame.image.load('assets/goblin_idle_frame_000.png').convert_alpha(), 
-      pygame.image.load('assets/goblin_idle_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/goblin_idle_frame_002.png').convert_alpha(), 
-      pygame.image.load('assets/goblin_idle_frame_003.png').convert_alpha()
+      pygame.image.load('assets/amber_goblin_idle_frame_000.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_002.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_003.png').convert_alpha()
     ]
     self.image = self.idle_frames[0]
     self.rect = self.image.get_rect()  
