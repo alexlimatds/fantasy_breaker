@@ -21,10 +21,14 @@ def load_grid_images(sheet_file, width, height, columns, rows):
   '''
   sheet_image = pygame.image.load(sheet_file).convert_alpha()
   images = []
+  cell_width = sheet_image.get_rect().w / columns
+  cell_height = sheet_image.get_rect().h / rows
+  x_delta = (cell_width - width) / 2
+  y_delta = (cell_height - height) / 2
   for row in range(rows):
     for col in range(columns):
-      x = col * width
-      y = row * height
+      x = col * cell_width + x_delta
+      y = row * cell_height + y_delta
       img = pygame.Surface([width, height], pygame.SRCALPHA)
       img.blit(sheet_image, (0, 0), (x, y, width, height))
       images.append(img)
@@ -71,39 +75,29 @@ class AmberGoblin(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
   def __init__(self, lives=0):
     pygame.sprite.Sprite.__init__(self)
-    self.running_left_frames = [
-      pygame.image.load('assets/player_run_left_frame_000.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_left_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_left_frame_002.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_left_frame_003.png').convert_alpha()
-    ]
-    self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
-    self.running_right_frames = [
-      pygame.image.load('assets/player_run_right_frame_000.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_right_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_right_frame_002.png').convert_alpha(), 
-      pygame.image.load('assets/player_run_right_frame_003.png').convert_alpha()
-    ]
+    FRAME_DIM = 115
+    # idle frames
+    self.idle_right_frames = load_grid_images('assets/player_idle_sheet.png', FRAME_DIM, FRAME_DIM, 6, 1)
+    self.idle_right_masks = [pygame.mask.from_surface(img) for img in self.idle_right_frames]
+    self.idle_left_frames = [pygame.transform.flip(img, True, False) for img in self.idle_right_frames]
+    self.idle_left_masks = [pygame.mask.from_surface(img) for img in self.idle_left_frames]
+    # running frames
+    self.running_right_frames = load_grid_images('assets/player_run_right_sheet.png', FRAME_DIM, FRAME_DIM, 8, 1)
     self.running_right_masks = [pygame.mask.from_surface(img) for img in self.running_right_frames]
-    self.aura_frames = [
-      pygame.image.load('assets/player_aura_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/player_aura_frame_002.png').convert_alpha()
-    ]
-    self.aura_masks = [pygame.mask.from_surface(img) for img in self.aura_frames]
-    self.idle_frame = pygame.image.load('assets/player_idle.png').convert_alpha()
-    self.idle_mask = pygame.mask.from_surface(self.idle_frame)
-
-    self.image = self.idle_frame
+    self.running_left_frames = [pygame.transform.flip(img, True, False) for img in self.running_right_frames]
+    self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
+    # initial state
+    self.image = self.idle_right_frames[0]
     self.rect = self.image.get_rect()
-    self.mask = self.idle_mask
+    self.mask = self.idle_right_masks[0]
     self.lives = lives
     self.speed = 7
     # state variables
-    self.IDLE = 0
-    self.RUNNING_LEFT = 1
-    self.RUNNING_RIGHT = 2
-    self.AURA = 3
-    self.state = self.IDLE
+    self.IDLE_RIGHT = 0
+    self.IDLE_LEFT = 1
+    self.RUNNING_LEFT = 2
+    self.RUNNING_RIGHT = 3
+    self.state = self.IDLE_RIGHT
     self.frame_count = 0
     self.tick = 1
 
@@ -118,12 +112,10 @@ class Player(pygame.sprite.Sprite):
     self.tick = 1
 
   def to_idle(self):
-    self.state = self.IDLE
-    self.frame_count = 0
-    self.tick = 1
-  
-  def to_aura(self):
-    self.state = self.AURA
+    if self.state == self.RUNNING_RIGHT:
+      self.state = self.IDLE_RIGHT
+    else:
+      self.state = self.IDLE_LEFT
     self.frame_count = 0
     self.tick = 1
   
@@ -135,27 +127,34 @@ class Player(pygame.sprite.Sprite):
 
   def update(self):
     TICK_CHANGE = 6
-    if self.state == self.IDLE:
-      self.image = self.idle_frame
+    if self.state == self.IDLE_RIGHT:
+      if self.tick == TICK_CHANGE:
+        self.tick = 0
+        self.image = self.idle_right_frames[self.frame_count]
+        self.mask = self.idle_right_masks[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.idle_right_frames)
+    elif self.state == self.IDLE_LEFT:
+      if self.tick == TICK_CHANGE:
+        self.tick = 0
+        self.image = self.idle_left_frames[self.frame_count]
+        self.mask = self.idle_left_masks[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.idle_left_frames)
     elif self.state == self.RUNNING_LEFT:
-      self.rect.x -= self.speed
-      self._adjust_position()
       if self.tick == TICK_CHANGE:
         self.tick = 0
         self.image = self.running_left_frames[self.frame_count]
+        self.mask = self.running_left_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_left_frames)
-    elif self.state == self.RUNNING_RIGHT:
-      self.rect.x += self.speed
+      self.rect.x -= self.speed
       self._adjust_position()
+    elif self.state == self.RUNNING_RIGHT:
       if self.tick == TICK_CHANGE:
         self.tick = 0
         self.image = self.running_right_frames[self.frame_count]
+        self.mask = self.running_right_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_right_frames)
-    elif self.state == self.AURA:
-      if self.tick == TICK_CHANGE:
-        self.tick = 0
-        self.image = self.aura_frames[self.frame_count]
-        self.frame_count = (self.frame_count + 1) % len(self.aura_frames)
+      self.rect.x += self.speed
+      self._adjust_position()
     self.tick += 1
 
 class Ball(pygame.sprite.Sprite):
@@ -204,8 +203,8 @@ class Arena:
 
 def center_player_and_ball(player, ball):
   player.rect.topleft = (
-    SCREEN_WIDHT / 2 - BLOCK_WIDHT / 2, 
-    SCREEN_HEIGHT - 65
+    SCREEN_WIDHT / 2 - player.rect.w / 2, 
+    SCREEN_HEIGHT - player.rect.h - 5
   )
   t = player.rect.topleft
   ball.rect.topleft = (

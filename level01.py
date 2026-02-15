@@ -52,12 +52,9 @@ def run(player_lives):
             player.to_left()
           if event.key == pygame.K_RIGHT:
             player.to_right()
-          if event.key == pygame.K_UP:
-            player.to_aura()
       elif event.type == pygame.KEYUP:
         if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
-           (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT) or \
-           (event.key == pygame.K_UP and player.state == player.AURA):
+           (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT):
           player.to_idle()
         if game_state == IN_GAME:
           if event.key == pygame.K_p:
@@ -65,10 +62,11 @@ def run(player_lives):
         elif game_state == PAUSED:
           if event.key == pygame.K_p:
             game_state = IN_GAME
-
+      player.update()
+      
     ### GAME LOGIC ###
     if game_state == ON_START:
-      player.state = player.IDLE
+      player.state = player.IDLE_RIGHT
       player.update()
       txt_start_1 = font_msgs.render('GET READY!', True, 'red')
       txt_start_2 = font_msgs.render(f'{start_count}', True, 'red')
@@ -88,17 +86,18 @@ def run(player_lives):
         start_count = 4
         game.center_player_and_ball(player, ball)
     elif game_state == IN_GAME:
-      all_sprites.update()
       arena.check_bump(ball)
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
       bellow_screen = arena.below_screen(ball)
-      if (player.state != player.AURA and collided or bellow_screen) and player.lives == 1:
+      if (collided or bellow_screen) and player.lives == 1:
         player.lives = 0
         game_state = GAME_OVER
-      elif (player.state != player.AURA and collided or bellow_screen) and player.lives > 1:
+      elif (collided or bellow_screen) and player.lives > 1:
         player.lives -= 1
         game_state = LOST_LIFE
         lost_time = pygame.time.get_ticks()
+      # TODO colisão com barra mágica
+      '''
       if collided and player.state == player.AURA:
         if ball.rect.bottom < player.rect.top + 35:
           ball.y_direction *= -1
@@ -106,12 +105,14 @@ def run(player_lives):
         else:
           ball.y_direction *= -1
           ball.x_direction *= -1
+      '''
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(ball)
         if c.hit_points <= 0:
           enemies.remove(c)
           all_sprites.remove(c)
+      all_sprites.update()
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
