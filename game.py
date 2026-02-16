@@ -36,7 +36,7 @@ def load_grid_images(sheet_file, width, height, columns, rows):
   return images
 
 def center_player_and_ball(player, ball):
-  player.rect.topleft = (
+  player.move_to(
     co.SCREEN_WIDHT / 2 - player.rect.w / 2, 
     co.SCREEN_HEIGHT - player.rect.h - 5
   )

@@ -21,7 +21,8 @@ def run(player_lives):
 
   ## SPRITES ##
   arena = sprites.Arena()
-  player = sprites.Player(player_lives)
+  magical_bar = sprites.MagicalBar()
+  player = sprites.Player(magical_bar, player_lives)
   ball = sprites.Ball()
   game.center_player_and_ball(player, ball)
   enemies = pygame.sprite.Group()
@@ -29,7 +30,7 @@ def run(player_lives):
   enemies.add(sprites.AmberGoblin(225, 30))
   enemies.add(sprites.AmberGoblin(375, 30))
   enemies.add(sprites.AmberGoblin(525, 30))
-  all_sprites = pygame.sprite.Group([player, ball])
+  all_sprites = pygame.sprite.Group([player, ball, magical_bar])
   all_sprites.add(enemies.sprites())
 
   start_time = pygame.time.get_ticks()
@@ -80,6 +81,7 @@ def run(player_lives):
         game.center_player_and_ball(player, ball)
     elif game_state == IN_GAME:
       arena.check_bump(ball)
+      # collision between ball and player
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
       bellow_screen = arena.below_screen(ball)
       if (collided or bellow_screen) and player.lives == 1:
@@ -89,16 +91,11 @@ def run(player_lives):
         player.lives -= 1
         game_state = LOST_LIFE
         lost_time = pygame.time.get_ticks()
-      # TODO colisão com barra mágica
-      '''
-      if collided and player.state == player.AURA:
-        if ball.rect.bottom < player.rect.top + 35:
-          ball.y_direction *= -1
-          ball.rect.y -= 4
-        else:
-          ball.y_direction *= -1
-          ball.x_direction *= -1
-      '''
+      # collision between ball and magical bar
+      collided = pygame.sprite.spritecollide(ball, [magical_bar], False, pygame.sprite.collide_mask)
+      if collided:
+        magical_bar.collide(ball)
+      # collision among ball and enemies
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(ball)

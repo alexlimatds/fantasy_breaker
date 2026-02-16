@@ -40,7 +40,7 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.hit_points -= 1
 
 class Player(pygame.sprite.Sprite):
-  def __init__(self, lives=0):
+  def __init__(self, magical_bar, lives=0):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 115
     # idle frames
@@ -59,6 +59,7 @@ class Player(pygame.sprite.Sprite):
     self.mask = self.idle_right_masks[0]
     self.lives = lives
     self.speed = 7
+    self.magical_bar = magical_bar
     # state variables
     self.IDLE_RIGHT = 0
     self.IDLE_LEFT = 1
@@ -67,6 +68,11 @@ class Player(pygame.sprite.Sprite):
     self.state = self.IDLE_RIGHT
     self.frame_count = 0
     self.tick = 1
+  
+  def move_to(self, x, y):
+    self.rect.topleft = (x, y)
+    self.magical_bar.rect.centerx = self.rect.centerx
+    self.magical_bar.rect.top = y - 60
 
   def to_left(self):
     self.state = self.RUNNING_LEFT
@@ -87,10 +93,12 @@ class Player(pygame.sprite.Sprite):
     self.tick = 1
   
   def _adjust_position(self):
+    y = self.rect.y
     if self.rect.left < 0:
-      self.rect.left = 0
+      self.move_to(0, y)
     elif self.rect.right > co.SCREEN_WIDHT:
-      self.rect.right = co.SCREEN_WIDHT
+      #self.rect.right = co.SCREEN_WIDHT
+      self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
 
   def update(self):
     TICK_CHANGE = 6
@@ -113,6 +121,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = self.running_left_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_left_frames)
       self.rect.x -= self.speed
+      self.magical_bar.rect.x -= self.speed
       self._adjust_position()
     elif self.state == self.RUNNING_RIGHT:
       if self.tick == TICK_CHANGE:
@@ -121,6 +130,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = self.running_right_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_right_frames)
       self.rect.x += self.speed
+      self.magical_bar.rect.x += self.speed
       self._adjust_position()
     self.tick += 1
 
@@ -166,3 +176,26 @@ class Arena:
 
   def below_screen(self, sprite):
     return sprite.rect.top > co.SCREEN_HEIGHT
+  
+class MagicalBar(pygame.sprite.Sprite):
+  def __init__(self):
+    pygame.sprite.Sprite.__init__(self)
+    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', 135, 135, 2, 1)
+    self.masks = [pygame.mask.from_surface(img) for img in self.frames]
+    self.image = self.frames[0]
+    self.mask = self.masks[0]
+    self.rect = self.image.get_rect()  
+    self.tick = 1
+    self.frame_count = 0
+
+  def update(self):
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
+  
+  def collide(self, ball):
+    ball.y_direction *= -1
+    ball.rect.y -= 3

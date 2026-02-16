@@ -1,8 +1,9 @@
-import game, pygame
+import game, pygame, sys
 
 # This unit is aimed only to code testing
 screen = pygame.display.set_mode((1200, 800))
 clock = pygame.time.Clock()
+'''
 dim = 115
 imgs = game.load_grid_images('assets/player_run_right_sheet.png', dim, dim, 8, 1)
 idx = 0
@@ -13,9 +14,11 @@ for i in range(2):
     screen.blit(imgs[idx], (x, y))
     pygame.draw.rect(screen, 'white', pygame.Rect(x, y, dim, dim), width=2)
     idx += 1
+'''
+img = pygame.image.load('assets/magical_bar_sheet.png').convert_alpha()
+screen.blit(img, (50, 50))
 
 pygame.display.flip() # Desenha o quadro atual na tela
-
 while True:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
