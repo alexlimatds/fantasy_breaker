@@ -57,6 +57,18 @@ def draw_msg(surface_txt, vertical_margin = 0):
     )
   )
 
+def draw_txt_level(surface_txt):
+  screen.blit(surface_txt, (5, 5))
+
+def draw_txt_lives(surface_txt):
+  screen.blit(
+    surface_txt, 
+    (
+      co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
+      5
+    )
+  )
+
 ### INITIALIZATION ###
 pygame.init()
 screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))

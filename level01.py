@@ -2,7 +2,7 @@ import game, pygame, sys
 import constants as co
 import sprites
 
-def run(player_lives):
+def run(player_lives, level):
   ## VARIABLES ##
   IN_GAME = 0
   PAUSED = 1
@@ -18,6 +18,7 @@ def run(player_lives):
   txt_paused = font_msgs.render("P A U S E", True, 'red')
   txt_game_over = font_msgs.render("GAME OVER", True, 'red')
   txt_lost = font_msgs.render("YOU HAVE LOST", True, 'red')
+  txt_level = font_stats.render(f"Level {level}", True, 'white')
 
   ## SPRITES ##
   arena = sprites.Arena()
@@ -59,6 +60,7 @@ def run(player_lives):
       player.update()
 
     ### GAME LOGIC ###
+    txt_lives = font_stats.render(f"Lives: {player.lives}", True, 'white')
     if game_state == ON_START:
       player.state = player.IDLE_RIGHT
       player.update()
@@ -106,6 +108,8 @@ def run(player_lives):
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
+    game.draw_txt_level(txt_level)
+    game.draw_txt_lives(txt_lives)
     all_sprites.draw(game.screen)
     if game_state == PAUSED:
       game.draw_msg(txt_paused)
@@ -120,7 +124,7 @@ def run(player_lives):
     game.clock.tick(45) # FPS
 
 def main():
-  run(3)
+  run(3, 1)
 
 if __name__ == "__main__":
   main()
