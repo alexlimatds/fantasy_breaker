@@ -49,9 +49,9 @@ def run(player_lives, level):
           if event.key == pygame.K_RIGHT:
             player.to_right()
           if event.key == pygame.K_UP:
-            player.magical_bar.increase_angle()
+            angle_pointer.increase = True
           if event.key == pygame.K_DOWN:
-            player.magical_bar.decrease_angle()
+            angle_pointer.decrease = True
       elif event.type == pygame.KEYUP:
         if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
            (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT):
@@ -62,6 +62,10 @@ def run(player_lives, level):
         elif game_state == PAUSED:
           if event.key == pygame.K_p:
             game_state = IN_GAME
+        if event.key == pygame.K_UP:
+          angle_pointer.increase = False
+        if event.key == pygame.K_DOWN:
+          angle_pointer.decrease = False
       player.update()
 
     ### GAME LOGIC ###

@@ -233,13 +233,25 @@ class AnglePointer(pygame.sprite.Sprite):
     self.image = pygame.Surface((40,20),  pygame.SRCALPHA)
     self.rect = self.image.get_rect()
     self.angle = math.pi / 2
+    self.increase = False
+    self.decrease = False
     self.update()
   
   def update(self):
     self.image.fill((0, 0, 0, 0))
+    angle_step = math.pi / 30
+    if self.increase:
+      alpha = min(self.angle + angle_step, 3 * math.pi / 4)
+      self.angle = alpha
+    elif self.decrease:
+      alpha = max(self.angle - angle_step, math.pi / 4)
+      self.angle = alpha
     d = self.rect.h
     x1 = self.rect.w / 2
     y1 = self.rect.h
     x2 = x1 + math.cos(self.angle) * d
     y2 = y1 - math.sin(self.angle) * d
     pygame.draw.line(self.image, '0x30b35f', (x1, y1), (x2, y2), 3)
+ 
+  
+
