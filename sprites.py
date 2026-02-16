@@ -72,7 +72,7 @@ class Player(pygame.sprite.Sprite):
   def move_to(self, x, y):
     self.rect.topleft = (x, y)
     self.magical_bar.rect.centerx = self.rect.centerx
-    self.magical_bar.rect.top = y - 60
+    self.magical_bar.rect.top = y - 5
 
   def to_left(self):
     self.state = self.RUNNING_LEFT
@@ -143,11 +143,27 @@ class Ball(pygame.sprite.Sprite):
     self.mask = pygame.mask.from_surface(self.image)
     self.x_direction = 1   # 1 for right, -1 for left
     self.y_direction = -1  # 1 for down, -1 for up
-    self.speed = 5
+    self.SPEED = 5
+    self.x_speed = self.SPEED
+    self.y_speed = self.SPEED
   
   def update(self):
-    self.rect.left += self.speed * self.x_direction
-    self.rect.top += self.speed * self.y_direction
+    self.rect.left += self.x_speed * self.x_direction
+    self.rect.top += self.y_speed * self.y_direction
+  
+  def deactivate_horizontal_movement(self):
+    self.x_speed = 0
+  
+  def activate_left_direction(self):
+    self.x_direction = -1
+    self.x_speed = self.SPEED
+  
+  def activate_right_direction(self):
+    self.x_direction = 1
+    self.x_speed = self.SPEED
+
+  def reverse_vertical_movement(self):
+    self.y_direction *= -1
       
 class Boundary(pygame.sprite.Sprite):
   def __init__(self, x, y, width, height):
@@ -180,7 +196,7 @@ class Arena:
 class MagicalBar(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
-    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', 135, 135, 2, 1)
+    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', 120, 7, 6, 1)
     self.masks = [pygame.mask.from_surface(img) for img in self.frames]
     self.image = self.frames[0]
     self.mask = self.masks[0]
@@ -197,5 +213,18 @@ class MagicalBar(pygame.sprite.Sprite):
     self.tick += 1
   
   def collide(self, ball):
-    ball.y_direction *= -1
+    # computing collision point
+    offset_x = ball.rect.x - self.rect.x
+    offset_y = ball.rect.y - self.rect.y
+    offset = (offset_x, offset_y)
+    collision_point = self.mask.overlap(ball.mask, offset)
+    if collision_point[0] < 40:
+      ball.reverse_vertical_movement()
+      ball.activate_left_direction()
+    elif collision_point[0] < 79:
+      ball.reverse_vertical_movement()
+      ball.deactivate_horizontal_movement()
+    else:
+      ball.reverse_vertical_movement()
+      ball.activate_right_direction()
     ball.rect.y -= 3
