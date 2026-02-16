@@ -1,4 +1,4 @@
-import pygame, game
+import pygame, game, math
 import constants as co
 
 class Block(pygame.sprite.Sprite):
@@ -73,6 +73,8 @@ class Player(pygame.sprite.Sprite):
     self.rect.topleft = (x, y)
     self.magical_bar.rect.centerx = self.rect.centerx
     self.magical_bar.rect.top = y - 5
+    self.magical_bar.angle_pointer.rect.centerx = self.rect.centerx
+    self.magical_bar.angle_pointer.rect.bottom = self.magical_bar.rect.top - 3
 
   def to_left(self):
     self.state = self.RUNNING_LEFT
@@ -122,6 +124,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_count = (self.frame_count + 1) % len(self.running_left_frames)
       self.rect.x -= self.speed
       self.magical_bar.rect.x -= self.speed
+      self.magical_bar.angle_pointer.rect.x -= self.speed
       self._adjust_position()
     elif self.state == self.RUNNING_RIGHT:
       if self.tick == TICK_CHANGE:
@@ -131,6 +134,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_count = (self.frame_count + 1) % len(self.running_right_frames)
       self.rect.x += self.speed
       self.magical_bar.rect.x += self.speed
+      self.magical_bar.angle_pointer.rect.x += self.speed
       self._adjust_position()
     self.tick += 1
 
@@ -141,29 +145,23 @@ class Ball(pygame.sprite.Sprite):
     self.image = pygame.transform.scale(img, (co.BALL_SIZE, co.BALL_SIZE))
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
-    self.x_direction = 1   # 1 for right, -1 for left
-    self.y_direction = -1  # 1 for down, -1 for up
     self.SPEED = 5
+    self.reset_movement()
+  
+  def reset_movement(self):
+    self.y_direction = -1  # 1 for down, -1 for up
     self.x_speed = self.SPEED
     self.y_speed = self.SPEED
-  
+
   def update(self):
-    self.rect.left += self.x_speed * self.x_direction
+    self.rect.left += self.x_speed
     self.rect.top += self.y_speed * self.y_direction
   
-  def deactivate_horizontal_movement(self):
-    self.x_speed = 0
-  
-  def activate_left_direction(self):
-    self.x_direction = -1
-    self.x_speed = self.SPEED
-  
-  def activate_right_direction(self):
-    self.x_direction = 1
-    self.x_speed = self.SPEED
-
   def reverse_vertical_movement(self):
     self.y_direction *= -1
+  
+  def reverse_horizontal_movement(self):
+    self.x_speed *= -1
       
 class Boundary(pygame.sprite.Sprite):
   def __init__(self, x, y, width, height):
@@ -176,17 +174,20 @@ class Boundary(pygame.sprite.Sprite):
 class Arena:
   # This class is used to check if an sprite reaches the boundaries of the screen
   def __init__(self):
-    self.left_edge = Boundary(-1, 0, 1, co.SCREEN_HEIGHT)
-    self.right_edge = Boundary(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
-    self.top_edge = Boundary(0, -1, co.SCREEN_WIDHT, 1)
-    self.edges = [self.left_edge, self.right_edge, self.top_edge]
+    self.left_boundary = Boundary(-1, 0, 1, co.SCREEN_HEIGHT)
+    self.right_boundary = Boundary(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
+    self.top_boundary = Boundary(0, -1, co.SCREEN_WIDHT, 1)
+    self.boundaries = [self.left_boundary, self.right_boundary, self.top_boundary]
   
   def check_bump(self, ball):
-    hitted_edges = pygame.sprite.spritecollide(ball, self.edges, False, pygame.sprite.collide_mask)
-    if self.left_edge in hitted_edges or self.right_edge in hitted_edges:
-      ball.x_direction *= -1
-      ball.rect.left += ball.x_direction * 2
-    if self.top_edge in hitted_edges:
+    hitted_boundaries = pygame.sprite.spritecollide(ball, self.boundaries, False, pygame.sprite.collide_mask)
+    if self.left_boundary in hitted_boundaries or self.right_boundary in hitted_boundaries:
+      ball.x_speed *= -1
+      if ball.x_speed > 0:
+        ball.rect.left += 2
+      else:
+        ball.rect.left -= 2
+    if self.top_boundary in hitted_boundaries:
       ball.y_direction *= -1
       ball.rect.top += ball.y_direction * 2
 
@@ -194,7 +195,7 @@ class Arena:
     return sprite.rect.top > co.SCREEN_HEIGHT
   
 class MagicalBar(pygame.sprite.Sprite):
-  def __init__(self):
+  def __init__(self, angle_pointer):
     pygame.sprite.Sprite.__init__(self)
     self.frames = game.load_grid_images('assets/magical_bar_sheet.png', 120, 7, 6, 1)
     self.masks = [pygame.mask.from_surface(img) for img in self.frames]
@@ -203,6 +204,7 @@ class MagicalBar(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()  
     self.tick = 1
     self.frame_count = 0
+    self.angle_pointer = angle_pointer
 
   def update(self):
     TICK_CHANGE = 12
@@ -213,18 +215,31 @@ class MagicalBar(pygame.sprite.Sprite):
     self.tick += 1
   
   def collide(self, ball):
-    # computing collision point
-    offset_x = ball.rect.x - self.rect.x
-    offset_y = ball.rect.y - self.rect.y
-    offset = (offset_x, offset_y)
-    collision_point = self.mask.overlap(ball.mask, offset)
-    if collision_point[0] < 40:
-      ball.reverse_vertical_movement()
-      ball.activate_left_direction()
-    elif collision_point[0] < 79:
-      ball.reverse_vertical_movement()
-      ball.deactivate_horizontal_movement()
-    else:
-      ball.reverse_vertical_movement()
-      ball.activate_right_direction()
+    ball.x_speed = ball.y_speed / math.tan(self.angle_pointer.angle)
+    ball.reverse_vertical_movement()
     ball.rect.y -= 3
+  
+  def increase_angle(self):
+    delta = min(self.angle_pointer.angle + math.pi / 10, 3 * math.pi / 4)
+    self.angle_pointer.angle = delta
+  
+  def decrease_angle(self):
+    delta = max(self.angle_pointer.angle - math.pi / 10, math.pi / 4)
+    self.angle_pointer.angle = delta
+
+class AnglePointer(pygame.sprite.Sprite):
+  def __init__(self):
+    pygame.sprite.Sprite.__init__(self)
+    self.image = pygame.Surface((40,20),  pygame.SRCALPHA)
+    self.rect = self.image.get_rect()
+    self.angle = math.pi / 2
+    self.update()
+  
+  def update(self):
+    self.image.fill((0, 0, 0, 0))
+    d = self.rect.h
+    x1 = self.rect.w / 2
+    y1 = self.rect.h
+    x2 = x1 + math.cos(self.angle) * d
+    y2 = y1 - math.sin(self.angle) * d
+    pygame.draw.line(self.image, '0x30b35f', (x1, y1), (x2, y2), 3)

@@ -22,7 +22,8 @@ def run(player_lives, level):
 
   ## SPRITES ##
   arena = sprites.Arena()
-  magical_bar = sprites.MagicalBar()
+  angle_pointer = sprites.AnglePointer()
+  magical_bar = sprites.MagicalBar(angle_pointer)
   player = sprites.Player(magical_bar, player_lives)
   ball = sprites.Ball()
   game.center_player_and_ball(player, ball)
@@ -31,7 +32,7 @@ def run(player_lives, level):
   enemies.add(sprites.AmberGoblin(225, 30))
   enemies.add(sprites.AmberGoblin(375, 30))
   enemies.add(sprites.AmberGoblin(525, 30))
-  all_sprites = pygame.sprite.Group([player, ball, magical_bar])
+  all_sprites = pygame.sprite.Group([player, ball, magical_bar, angle_pointer])
   all_sprites.add(enemies.sprites())
 
   start_time = pygame.time.get_ticks()
@@ -47,6 +48,10 @@ def run(player_lives, level):
             player.to_left()
           if event.key == pygame.K_RIGHT:
             player.to_right()
+          if event.key == pygame.K_UP:
+            player.magical_bar.increase_angle()
+          if event.key == pygame.K_DOWN:
+            player.magical_bar.decrease_angle()
       elif event.type == pygame.KEYUP:
         if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
            (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT):

@@ -45,8 +45,7 @@ def center_player_and_ball(player, ball):
     t[0] + player.rect.width / 2, 
     t[1] - 60
   )
-  ball.x_direction = 1
-  ball.y_direction = -1
+  ball.reset_movement()
 
 def draw_msg(surface_txt, vertical_margin = 0):
   screen.blit(
