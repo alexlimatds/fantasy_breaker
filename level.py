@@ -76,7 +76,7 @@ def run(level, player, enemies, blocks):
         elif game_state == PAUSED:
           if event.key == pygame.K_p:
             game_state = IN_GAME
-        elif game_state == VICTORY:
+        elif game_state == VICTORY or game_state == GAME_OVER:
           if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
             run_game_loop = False
         if event.key == pygame.K_UP:
@@ -161,6 +161,7 @@ def run(level, player, enemies, blocks):
       game.draw_msg(txt_lost)
     elif game_state == GAME_OVER:
       game.draw_msg(txt_game_over)
+      game.draw_msg(txt_continue, vertical_margin=30)
     elif game_state == ON_START:
       game.draw_msg(txt_start_1)
       game.draw_msg(txt_start_2, vertical_margin=30)
