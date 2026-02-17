@@ -9,6 +9,8 @@ import constants as co
 # Icons by Lorc: https://lorcblog.blogspot.com/
 # https://opengameart.org/content/dungeon-crawl-32x32-tiles
 # https://luizmelo.itch.io/monsters-creatures-fantasy
+# https://beast-pixels.itch.io/crafting-materials
+# https://petraheim.itch.io/breakout-pixelart
 
 def load_grid_images(sheet_file, width, height, columns, rows):
   '''
@@ -86,5 +88,4 @@ def create_amber_goblin(center_x, top):
 pygame.init()
 screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
 pygame.display.set_caption("Fantasy Breaker")
-
 clock = pygame.time.Clock()

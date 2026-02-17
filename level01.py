@@ -10,11 +10,15 @@ def run(player):
   '''
   ## SPRITES ##
   enemies = pygame.sprite.Group()
+  y = 30
   for i in range(100, 800, 200):
-    enemy, _ = game.create_amber_goblin(i, 30)
+    enemy, _ = game.create_amber_goblin(i, y)
     enemies.add(enemy)
   enemy = None
   blocks = pygame.sprite.Group()
+  for i in range(100, 800, 200):
+    blocks.add(sprites.BrickBlock(i - 30, y + 100))
+    blocks.add(sprites.BrickBlock(i + 30, y + 100))
   ## RUN LEVEL ##
   level.run(1, player, enemies, blocks)
 

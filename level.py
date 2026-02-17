@@ -46,6 +46,7 @@ def run(level, player, enemies, blocks):
     all_sprites.add([enemy, attack])
     attacks.add(attack)
   enemy, attack = None, None
+  all_sprites.add(blocks)
 
   ## GAME LOOP ##
   start_time = pygame.time.get_ticks()
@@ -124,6 +125,12 @@ def run(level, player, enemies, blocks):
       collided = pygame.sprite.spritecollide(player, attacks, False, pygame.sprite.collide_mask)
       if collided:
         defeated = True
+      # collision among ball and blocks
+      collided = pygame.sprite.spritecollide(ball, blocks, False, pygame.sprite.collide_mask)
+      for c in collided:
+        c.collide(ball)
+        if c.hit_points <= 0:
+          c.kill()
       # collision among ball and enemies
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
       for c in collided:
