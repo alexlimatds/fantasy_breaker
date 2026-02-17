@@ -33,9 +33,9 @@ def run(player_lives, level):
   game.center_player_and_ball(player, ball)
   enemies = pygame.sprite.Group()
   enemies.add(sprites.AmberGoblin(75, 30))
-  #enemies.add(sprites.AmberGoblin(225, 30))
-  #enemies.add(sprites.AmberGoblin(375, 30))
-  #enemies.add(sprites.AmberGoblin(525, 30))
+  enemies.add(sprites.AmberGoblin(225, 30))
+  enemies.add(sprites.AmberGoblin(375, 30))
+  enemies.add(sprites.AmberGoblin(525, 30))
   all_sprites = pygame.sprite.Group([player, ball, magical_bar, angle_pointer])
   all_sprites.add(enemies.sprites())
 
@@ -118,8 +118,7 @@ def run(player_lives, level):
       for c in collided:
         c.collide(ball)
         if c.hit_points <= 0:
-          enemies.remove(c)
-          all_sprites.remove(c)
+          c.kill()
       if len(enemies) == 0:
         game_state = VICTORY
       all_sprites.update()
