@@ -42,7 +42,7 @@ def center_player_and_ball(player, ball):
   )
   t = player.rect.topleft
   ball.rect.topleft = (
-    t[0] + player.rect.width / 2, 
+    t[0] + player.rect.width / 2 + 5, 
     t[1] - 60
   )
   ball.reset_movement()
