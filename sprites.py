@@ -256,9 +256,7 @@ class AnglePointer(pygame.sprite.Sprite):
       new_angle = alpha
     # image update
     if new_angle:
-      delta = new_angle - self.angle
       self.angle = new_angle
-      
       rotated_img = pygame.transform.rotate(
         self.original_image, 
         math.degrees(self.angle - math.pi / 2)
