@@ -218,14 +218,6 @@ class MagicalBar(pygame.sprite.Sprite):
     ball.x_speed = ball.y_speed / math.tan(self.angle_pointer.angle)
     ball.reverse_vertical_movement()
     ball.rect.y -= 3
-  
-  def increase_angle(self):
-    delta = min(self.angle_pointer.angle + math.pi / 10, 3 * math.pi / 4)
-    self.angle_pointer.angle = delta
-  
-  def decrease_angle(self):
-    delta = max(self.angle_pointer.angle - math.pi / 10, math.pi / 4)
-    self.angle_pointer.angle = delta
 
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
