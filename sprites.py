@@ -140,12 +140,16 @@ class Player(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
-    img = pygame.image.load('assets/mace-head.png').convert_alpha()
-    self.image = pygame.transform.scale(img, (co.BALL_SIZE, co.BALL_SIZE))
+    BALL_DIM = 40
+    self.frames = game.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
+    self.masks = [pygame.mask.from_surface(img) for img in self.frames]
+    self.image = self.frames[0]
+    self.mask = self.masks[0]
     self.rect = self.image.get_rect()
-    self.mask = pygame.mask.from_surface(self.image)
     self.SPEED = 5 * math.sqrt(2)
     self.reset_movement()
+    self.tick = 1
+    self.frame_count = 0
   
   def reset_movement(self):
     self.y_direction = -1  # 1 for down, -1 for up
@@ -153,8 +157,16 @@ class Ball(pygame.sprite.Sprite):
     self.y_speed = self.SPEED * math.sin(math.pi / 4)
 
   def update(self):
+    # movement
     self.rect.left += self.x_speed
     self.rect.top += self.y_speed * self.y_direction
+    # animation
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
   
   def reverse_vertical_movement(self):
     self.y_direction *= -1
