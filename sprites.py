@@ -145,13 +145,13 @@ class Ball(pygame.sprite.Sprite):
     self.image = pygame.transform.scale(img, (co.BALL_SIZE, co.BALL_SIZE))
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
-    self.SPEED = 5
+    self.SPEED = 5 * math.sqrt(2)
     self.reset_movement()
   
   def reset_movement(self):
     self.y_direction = -1  # 1 for down, -1 for up
-    self.x_speed = self.SPEED
-    self.y_speed = self.SPEED
+    self.x_speed = self.SPEED * math.cos(math.pi / 4)
+    self.y_speed = self.SPEED * math.sin(math.pi / 4)
 
   def update(self):
     self.rect.left += self.x_speed
@@ -215,7 +215,8 @@ class MagicalBar(pygame.sprite.Sprite):
     self.tick += 1
   
   def collide(self, ball):
-    ball.x_speed = ball.y_speed / math.tan(self.angle_pointer.angle)
+    ball.x_speed = ball.SPEED * math.cos(self.angle_pointer.angle)
+    ball.y_speed = ball.SPEED * math.sin(self.angle_pointer.angle)
     ball.reverse_vertical_movement()
     ball.rect.y -= 3
 
