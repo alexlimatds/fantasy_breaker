@@ -99,7 +99,6 @@ class Player(pygame.sprite.Sprite):
     if self.rect.left < 0:
       self.move_to(0, y)
     elif self.rect.right > co.SCREEN_WIDHT:
-      #self.rect.right = co.SCREEN_WIDHT
       self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
 
   def update(self):
@@ -197,7 +196,9 @@ class Arena:
 class MagicalBar(pygame.sprite.Sprite):
   def __init__(self, angle_pointer):
     pygame.sprite.Sprite.__init__(self)
-    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', 120, 7, 6, 1)
+    FRAME_WIDTH = 90
+    FRAME_HEIGHT = 7
+    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
     self.masks = [pygame.mask.from_surface(img) for img in self.frames]
     self.image = self.frames[0]
     self.mask = self.masks[0]
@@ -218,7 +219,7 @@ class MagicalBar(pygame.sprite.Sprite):
     ball.x_speed = ball.SPEED * math.cos(self.angle_pointer.angle)
     ball.y_speed = ball.SPEED * math.sin(self.angle_pointer.angle)
     ball.reverse_vertical_movement()
-    ball.rect.y -= 3
+    ball.rect.bottom = self.rect.top - 1
 
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
