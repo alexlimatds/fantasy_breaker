@@ -9,16 +9,20 @@ def run(player_lives, level):
   LOST_LIFE = 2
   GAME_OVER = 3
   ON_START = 4
+  VICTORY = 5
   game_state = ON_START
   start_count = 3
+  run_game_loop = True
 
   ## TEXT ##
   font_msgs = pygame.font.Font(None, 40)
-  font_stats = pygame.font.Font(None, 18)
+  font_stats = pygame.font.Font(None, 20)
   txt_paused = font_msgs.render("P A U S E", True, 'red')
   txt_game_over = font_msgs.render("GAME OVER", True, 'red')
-  txt_lost = font_msgs.render("YOU HAVE LOST", True, 'red')
+  txt_lost = font_msgs.render("DEFEAT", True, 'red')
   txt_level = font_stats.render(f"Level {level}", True, 'white')
+  txt_victory = font_msgs.render("VICTORY!", True, '0x99369e')
+  txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
 
   ## SPRITES ##
   arena = sprites.Arena()
@@ -29,14 +33,14 @@ def run(player_lives, level):
   game.center_player_and_ball(player, ball)
   enemies = pygame.sprite.Group()
   enemies.add(sprites.AmberGoblin(75, 30))
-  enemies.add(sprites.AmberGoblin(225, 30))
-  enemies.add(sprites.AmberGoblin(375, 30))
-  enemies.add(sprites.AmberGoblin(525, 30))
+  #enemies.add(sprites.AmberGoblin(225, 30))
+  #enemies.add(sprites.AmberGoblin(375, 30))
+  #enemies.add(sprites.AmberGoblin(525, 30))
   all_sprites = pygame.sprite.Group([player, ball, magical_bar, angle_pointer])
   all_sprites.add(enemies.sprites())
 
   start_time = pygame.time.get_ticks()
-  while True:
+  while run_game_loop:
     ### INPUT ###
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -62,6 +66,9 @@ def run(player_lives, level):
         elif game_state == PAUSED:
           if event.key == pygame.K_p:
             game_state = IN_GAME
+        elif game_state == VICTORY:
+          if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+            run_game_loop = False
         if event.key == pygame.K_UP:
           angle_pointer.increase = False
         if event.key == pygame.K_DOWN:
@@ -113,6 +120,8 @@ def run(player_lives, level):
         if c.hit_points <= 0:
           enemies.remove(c)
           all_sprites.remove(c)
+      if len(enemies) == 0:
+        game_state = VICTORY
       all_sprites.update()
 
     ### RENDERING ###
@@ -129,6 +138,9 @@ def run(player_lives, level):
     elif game_state == ON_START:
       game.draw_msg(txt_start_1)
       game.draw_msg(txt_start_2, vertical_margin=30)
+    elif game_state == VICTORY:
+      game.draw_msg(txt_victory)
+      game.draw_msg(txt_continue, vertical_margin=30)
     pygame.display.flip()
     game.clock.tick(45) # FPS
 
