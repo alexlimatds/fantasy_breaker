@@ -25,20 +25,24 @@ def run(player_lives, level):
   txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
 
   ## SPRITES ##
+  all_sprites = pygame.sprite.Group()
   arena = sprites.Arena()
   angle_pointer = sprites.AnglePointer()
   magical_bar = sprites.MagicalBar(angle_pointer)
   player = sprites.Player(magical_bar, player_lives)
   ball = sprites.Ball()
+  all_sprites.add([player, ball, magical_bar, angle_pointer])
   game.center_player_and_ball(player, ball)
   enemies = pygame.sprite.Group()
-  enemies.add(sprites.AmberGoblin(75, 30))
-  enemies.add(sprites.AmberGoblin(225, 30))
-  enemies.add(sprites.AmberGoblin(375, 30))
-  enemies.add(sprites.AmberGoblin(525, 30))
-  all_sprites = pygame.sprite.Group([player, ball, magical_bar, angle_pointer])
-  all_sprites.add(enemies.sprites())
+  attacks = pygame.sprite.Group()
+  for i in range(100, 800, 200):
+    enemy, attack = game.create_amber_goblin(i, 30)
+    all_sprites.add([enemy, attack])
+    enemies.add(enemy)
+    attacks.add(attack)
+  enemy, attack = None, None
 
+  ## GAME LOOP ##
   start_time = pygame.time.get_ticks()
   while run_game_loop:
     ### INPUT ###
@@ -78,6 +82,8 @@ def run(player_lives, level):
     ### GAME LOGIC ###
     txt_lives = font_stats.render(f"Lives: {player.lives}", True, 'white')
     if game_state == ON_START:
+      for a in attacks:
+        a.hide()
       player.state = player.IDLE_RIGHT
       player.update()
       txt_start_1 = font_msgs.render('GET READY!', True, 'red')
@@ -99,28 +105,37 @@ def run(player_lives, level):
         game.center_player_and_ball(player, ball)
     elif game_state == IN_GAME:
       arena.check_bump(ball)
+      defeated = False
       # collision between ball and player
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
       bellow_screen = arena.below_screen(ball)
-      if (collided or bellow_screen) and player.lives == 1:
-        player.lives = 0
-        game_state = GAME_OVER
-      elif (collided or bellow_screen) and player.lives > 1:
-        player.lives -= 1
-        game_state = LOST_LIFE
-        lost_time = pygame.time.get_ticks()
+      if collided or bellow_screen:
+        defeated = True
       # collision between ball and magical bar
       collided = pygame.sprite.spritecollide(ball, [magical_bar], False, pygame.sprite.collide_mask)
       if collided:
         magical_bar.collide(ball)
+      # collision among player and attacks
+      collided = pygame.sprite.spritecollide(player, attacks, False, pygame.sprite.collide_mask)
+      if collided:
+        defeated = True
       # collision among ball and enemies
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(ball)
         if c.hit_points <= 0:
           c.kill()
+          c.attack.kill()
       if len(enemies) == 0:
         game_state = VICTORY
+      # checking defeat
+      if defeated and player.lives == 1:
+        player.lives = 0
+        game_state = GAME_OVER
+      elif defeated and player.lives > 1:
+        player.lives -= 1
+        game_state = LOST_LIFE
+        lost_time = pygame.time.get_ticks()
       all_sprites.update()
 
     ### RENDERING ###

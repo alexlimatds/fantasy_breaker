@@ -11,7 +11,7 @@ class Block(pygame.sprite.Sprite):
     self.hit_points = 1
 
 class AmberGoblin(pygame.sprite.Sprite):
-  def __init__(self, x, y):
+  def __init__(self, centerx, top):
     pygame.sprite.Sprite.__init__(self)
     self.idle_frames = [
       pygame.image.load('assets/amber_goblin_idle_frame_000.png').convert_alpha(), 
@@ -22,17 +22,20 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.image = self.idle_frames[0]
     self.rect = self.image.get_rect()  
     self.mask = pygame.mask.from_surface(self.idle_frames[0])
-    self.rect.topleft = (x, y)
+    self.rect.midtop = (centerx, top)
     self.hit_points = 1
-    self.tick = 1
+    self.tick = random.randint(0, 110)
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
+    self.attack = game.create_dagger(self.rect.centerx, self.rect.bottom + 5)
 
   def update(self):
-    TICK_CHANGE = 6
-    if self.tick == TICK_CHANGE:
-      self.tick = 0
+    TICK_ANIMATION = 6
+    TICK_PROJECTILE = 120
+    if self.tick % TICK_ANIMATION == 0:
       self.image = self.idle_frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.idle_frames)
+    if self.tick % TICK_PROJECTILE == 0:
+      self.attack.throw()
     self.tick += 1
   
   def collide(self, ball):
@@ -266,5 +269,26 @@ class AnglePointer(pygame.sprite.Sprite):
       self.rect = rotated_rect
       self.image = rotated_img
  
-  
+class InanimateProjectile(pygame.sprite.Sprite):
+  def __init__(self, image_path, speed, centerx, top):
+    pygame.sprite.Sprite.__init__(self)
+    self.image = pygame.image.load(image_path).convert_alpha()
+    self.rect = self.image.get_rect()
+    self.speed = speed
+    self.throwing_point = (centerx, top)
+    self.hide()
+
+  def throw(self):
+    self.visible = True
+    self.rect.midtop = self.throwing_point
+
+  def hide(self):
+    self.visible = False
+    self.rect.topleft = (-self.rect.w - 5, -self.rect.h - 5)
+
+  def update(self):
+    if self.visible:
+      self.rect.y += self.speed
+    if self.rect.y > co.SCREEN_HEIGHT:
+      self.visible = False
 

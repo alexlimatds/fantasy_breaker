@@ -1,4 +1,4 @@
-import pygame
+import pygame, sprites
 import constants as co
 
 # https://opengameart.org/content/700-rpg-icons
@@ -67,6 +67,20 @@ def draw_txt_lives(surface_txt):
       5
     )
   )
+
+def create_dagger(center_x, y):
+  dg = sprites.InanimateProjectile(
+    'assets/dagger.png', 
+    5, 
+    center_x, 
+    y
+  )
+  return dg
+
+def create_amber_goblin(center_x, top):
+  goblin = sprites.AmberGoblin(center_x, top)
+  dagger = goblin.attack
+  return goblin, dagger
 
 ### INITIALIZATION ###
 pygame.init()
