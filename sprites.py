@@ -1,4 +1,4 @@
-import pygame, game, math
+import pygame, game, math, random
 import constants as co
 
 class Block(pygame.sprite.Sprite):
@@ -25,7 +25,7 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.rect.topleft = (x, y)
     self.hit_points = 1
     self.tick = 1
-    self.frame_count = 0
+    self.frame_count = random.randint(0, len(self.idle_frames) - 1)
 
   def update(self):
     TICK_CHANGE = 6
