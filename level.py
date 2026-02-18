@@ -129,8 +129,6 @@ def run(level, player, enemies, blocks):
       collided = pygame.sprite.spritecollide(ball, blocks, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(ball)
-        if c.hit_points <= 0:
-          c.kill()
       # collision among ball and enemies
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
       for c in collided:

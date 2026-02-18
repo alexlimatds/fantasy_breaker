@@ -17,8 +17,8 @@ def run(player):
   enemy = None
   blocks = pygame.sprite.Group()
   for i in range(100, 800, 200):
-    blocks.add(sprites.BrickBlock(i - 30, y + 100))
-    blocks.add(sprites.BrickBlock(i + 30, y + 100))
+    blocks.add(sprites.BrickBlock(i - 40, y + 100))
+    blocks.add(sprites.BrickBlock(i + 40, y + 100))
   ## RUN LEVEL ##
   level.run(1, player, enemies, blocks)
 

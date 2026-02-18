@@ -1,11 +1,12 @@
 import pygame, game, math, random
 import constants as co
 
+
 class BrickBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
-    tiles = game.load_grid_images('assets/resources_basic_sheet.png', 24, 24, 11, 11)
-    self.image = tiles[57]
+    self.image = pygame.image.load('assets/brick_block.png').convert_alpha()
+    self.image = pygame.transform.scale(self.image, (55, 30))
     self.rect = self.image.get_rect()  
     self.rect.midtop = (center_x, y)
     self.hit_points = 1
@@ -13,6 +14,8 @@ class BrickBlock(pygame.sprite.Sprite):
   def collide(self, ball):
     ball.y_direction *= -1
     self.hit_points -= 1
+    if self.hit_points <= 0:
+      self.kill()
 
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
