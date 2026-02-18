@@ -112,14 +112,16 @@ class Player(pygame.sprite.Sprite):
     self.magical_bar.angle_pointer.rect.bottom = self.magical_bar.rect.top - 3
 
   def to_left(self):
-    self.state = self.RUNNING_LEFT
-    self.frame_count = 0
-    self.tick = 1
+    if self.state != self.RUNNING_LEFT:
+      self.state = self.RUNNING_LEFT
+      self.frame_count = 0
+      self.tick = 1
   
   def to_right(self):
-    self.state = self.RUNNING_RIGHT
-    self.frame_count = 0
-    self.tick = 1
+    if self.state != self.RUNNING_RIGHT:
+      self.state = self.RUNNING_RIGHT
+      self.frame_count = 0
+      self.tick = 1
 
   def to_idle(self):
     if self.state == self.RUNNING_RIGHT:

@@ -58,10 +58,6 @@ def run(level, player, enemies, blocks):
         sys.exit()
       elif event.type == pygame.KEYDOWN:
         if game_state == IN_GAME:
-          if event.key == pygame.K_LEFT:
-            player.to_left()
-          if event.key == pygame.K_RIGHT:
-            player.to_right()
           if event.key == pygame.K_UP:
             angle_pointer.increase = True
           if event.key == pygame.K_DOWN:
@@ -85,6 +81,12 @@ def run(level, player, enemies, blocks):
           angle_pointer.decrease = False
       player.update()
 
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+      player.to_left()
+    if keys[pygame.K_RIGHT]:
+      player.to_right()
+      
     ### GAME LOGIC ###
     txt_lives = font_stats.render(f"Lives: {player.lives}", True, 'white')
     if game_state == ON_START:
