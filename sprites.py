@@ -9,11 +9,11 @@ class BrickBlock(pygame.sprite.Sprite):
     self.image = pygame.transform.scale(self.image, (55, 30))
     self.rect = self.image.get_rect()  
     self.rect.midtop = (center_x, y)
-    self.hit_points = 1
+    self.hit_points = 2
   
   def collide(self, ball):
     ball.y_direction *= -1
-    self.hit_points -= 1
+    self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
 
@@ -47,7 +47,10 @@ class AmberGoblin(pygame.sprite.Sprite):
   
   def collide(self, ball):
     ball.y_direction *= -1
-    self.hit_points -= 1
+    self.hit_points -= ball.strength
+    if self.hit_points <= 0:
+      self.kill()
+      self.attack.kill()
 
 class Player(pygame.sprite.Sprite):
   def __init__(self, magical_bar, lives=0):
@@ -151,16 +154,48 @@ class Ball(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
     BALL_DIM = 40
-    self.frames = game.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
-    self.masks = [pygame.mask.from_surface(img) for img in self.frames]
+    # loading frames
+    original_frames = game.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
+    self.strong_frames = original_frames.copy()
+    self.median_frames = [pygame.transform.scale_by(f, 0.6) for f in original_frames]
+    self.weak_frames = [pygame.transform.scale_by(f, 0.3) for f in original_frames]
+    self.strong_mask = pygame.mask.from_surface(self.strong_frames[0])
+    self.median_mask = pygame.mask.from_surface(self.median_frames[0])
+    self.weak_mask = pygame.mask.from_surface(self.weak_frames[0])
+    self.dic_frames = {
+      1: self.weak_frames, 
+      2: self.median_frames, 
+      3: self.strong_frames
+    }
+    self.dic_masks = {
+      1: self.weak_mask, 
+      2: self.median_mask, 
+      3: self.strong_mask
+    }
+    # initiantinf state
+    self.frames = self.weak_frames
     self.image = self.frames[0]
-    self.mask = self.masks[0]
+    self.mask = self.weak_mask
     self.rect = self.image.get_rect()
     self.SPEED = 5 * math.sqrt(2)
     self.reset_movement()
+    self.strength = 1
+    # animation variables
     self.tick = 1
     self.frame_count = 0
   
+  def increase_strength(self):
+    if self.strength < 3:
+      self.strength += 1
+      self.frames = self.dic_frames[self.strength]
+      self.mask = self.dic_masks[self.strength]
+  
+  def decrease_strength(self):
+    if self.strength > 1:
+      self.strength -= 1
+      self.frames = self.dic_frames[self.strength]
+      self.mask = self.dic_masks[self.strength]
+
   def reset_movement(self):
     self.y_direction = -1  # 1 for down, -1 for up
     self.x_speed = self.SPEED * math.cos(math.pi / 4)
