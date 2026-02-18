@@ -53,7 +53,6 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
-      self.attack.kill()
 
 class Player(pygame.sprite.Sprite):
   def __init__(self, magical_bar, lives=0):
