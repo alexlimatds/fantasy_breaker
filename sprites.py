@@ -1,14 +1,14 @@
 import pygame, game, math, random
 import constants as co
 
-
 class BrickBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
     self.frames = game.load_grid_images('assets/brick_block_sheet.png', 110, 30, 2, 1)
     self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
     self.image = self.frames[0]
-    self.rect = self.image.get_rect()  
+    self.rect = self.image.get_rect()
+    self.mask = pygame.mask.from_surface(self.image)
     self.rect.midtop = (center_x, y)
     self.hit_points = 2
   
@@ -26,7 +26,8 @@ class ConcreteBlock(pygame.sprite.Sprite):
     self.frames = game.load_grid_images('assets/concrete_block_sheet.png', 110, 30, 3, 1)
     self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
     self.image = self.frames[0]
-    self.rect = self.image.get_rect()  
+    self.rect = self.image.get_rect()
+    self.mask = pygame.mask.from_surface(self.image)
     self.rect.midtop = (center_x, y)
     self.hit_points = 4
   
@@ -352,6 +353,7 @@ class InanimateProjectile(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     self.image = pygame.image.load(image_path).convert_alpha()
     self.rect = self.image.get_rect()
+    self.mask = pygame.mask.from_surface(self.image)
     self.speed = speed
     self.throwing_point = (centerx, top)
     self.hide()
