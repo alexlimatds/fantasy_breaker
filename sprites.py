@@ -391,3 +391,36 @@ class InanimateProjectile(pygame.sprite.Sprite):
     if self.rect.y > co.SCREEN_HEIGHT:
       self.visible = False
 
+class AmberBossGoblin(pygame.sprite.Sprite):
+  def __init__(self, centerx, top):
+    pygame.sprite.Sprite.__init__(self)
+    self.idle_frames = [
+      pygame.image.load('assets/amber_goblin_idle_frame_000.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_001.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_002.png').convert_alpha(), 
+      pygame.image.load('assets/amber_goblin_idle_frame_003.png').convert_alpha()
+    ]
+    self.idle_frames = [pygame.transform.scale_by(f, 2) for f in self.idle_frames]
+    self.image = self.idle_frames[0]
+    self.rect = self.image.get_rect()  
+    self.mask = pygame.mask.from_surface(self.idle_frames[0])
+    self.rect.midtop = (centerx, top)
+    self.hit_points = 10
+    self.tick = random.randint(0, 110)
+    self.frame_count = random.randint(0, len(self.idle_frames) - 1)
+    self.attack = game.create_big_dagger(self.rect.centerx, self.rect.bottom + 5)
+
+  def update(self, *args, **kwargs):
+    TICK_ANIMATION = 6
+    TICK_PROJECTILE = 120
+    if self.tick % TICK_ANIMATION == 0:
+      self.image = self.idle_frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.idle_frames)
+    if self.tick % TICK_PROJECTILE == 0:
+      self.attack.throw()
+    self.tick += 1
+  
+  def collide(self, ball):
+    self.hit_points -= ball.strength
+    if self.hit_points <= 0:
+      self.kill()

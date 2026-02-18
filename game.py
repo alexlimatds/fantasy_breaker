@@ -79,8 +79,24 @@ def create_dagger(center_x, y):
   )
   return dg
 
+def create_big_dagger(center_x, y):
+  dg = sprites.InanimateProjectile(
+    'assets/dagger.png', 
+    10, 
+    center_x, 
+    y
+  )
+  dg.image = pygame.transform.scale_by(dg.image, 2)
+  dg.rect = dg.image.get_rect()
+  return dg
+
 def create_amber_goblin(center_x, top):
   goblin = sprites.AmberGoblin(center_x, top)
+  dagger = goblin.attack
+  return goblin, dagger
+
+def create_amber_boss_goblin(center_x, top):
+  goblin = sprites.AmberBossGoblin(center_x, top)
   dagger = goblin.attack
   return goblin, dagger
 
