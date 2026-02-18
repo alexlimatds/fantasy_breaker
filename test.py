@@ -1,27 +1,31 @@
-import game, pygame, sys
+import game, pygame, level
+import constants as co
+import sprites
 
-# This unit is aimed only to code testing
-screen = pygame.display.set_mode((1200, 800))
-clock = pygame.time.Clock()
-'''
-dim = 115
-imgs = game.load_grid_images('assets/player_run_right_sheet.png', dim, dim, 8, 1)
-idx = 0
-for i in range(2):
-  for j in range(3):
-    x = 20 + dim * j
-    y = 20 + dim * i
-    screen.blit(imgs[idx], (x, y))
-    pygame.draw.rect(screen, 'white', pygame.Rect(x, y, dim, dim), width=2)
-    idx += 1
-'''
-img = pygame.image.load('assets/magical_bar_sheet.png').convert_alpha()
-screen.blit(img, (50, 50))
+def run(player):
+  '''
+  Defines the sprites of Level 01 and execute it
+  
+  :param player: An instance of sprites.Player.
+  '''
+  ## SPRITES ##
+  e = sprites.AmberGoblin(-100, 0)
+  enemies = pygame.sprite.Group(e)
+  x = 500
+  blocks = pygame.sprite.Group()
+  for i in range(1, 7):
+    b = sprites.ConcreteBlock(x + i * 55, 300)
+    b.hit_points = 1000
+    blocks.add(b)
+  ## RUN LEVEL ##
+  level.run('Test', player, enemies, blocks)
 
-pygame.display.flip() # Desenha o quadro atual na tela
-while True:
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-      pygame.quit()
-      sys.exit()
-  clock.tick(45)
+def main():
+  # Run this function to test the level
+  angle_pointer = sprites.AnglePointer()
+  magical_bar = sprites.MagicalBar(angle_pointer)
+  player = sprites.Player(magical_bar, 3)
+  run(player)
+
+if __name__ == "__main__":
+  main()

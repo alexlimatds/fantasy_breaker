@@ -47,6 +47,8 @@ def run(level, player, enemies, blocks):
     attacks.add(attack)
   enemy, attack = None, None
   all_sprites.add(blocks)
+  targets = blocks.copy()
+  targets.add(enemies)
 
   ## GAME LOOP ##
   start_time = pygame.time.get_ticks()
@@ -145,7 +147,7 @@ def run(level, player, enemies, blocks):
         player.lives -= 1
         game_state = LOST_LIFE
         lost_time = pygame.time.get_ticks()
-      all_sprites.update()
+      all_sprites.update(target_sprites=targets)
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))

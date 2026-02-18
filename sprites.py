@@ -13,7 +13,6 @@ class BrickBlock(pygame.sprite.Sprite):
     self.hit_points = 2
   
   def collide(self, ball):
-    ball.y_direction *= -1
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
@@ -32,7 +31,6 @@ class ConcreteBlock(pygame.sprite.Sprite):
     self.hit_points = 4
   
   def collide(self, ball):
-    ball.y_direction *= -1
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
@@ -59,7 +57,7 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
     self.attack = game.create_dagger(self.rect.centerx, self.rect.bottom + 5)
 
-  def update(self):
+  def update(self, *args, **kwargs):
     TICK_ANIMATION = 6
     TICK_PROJECTILE = 120
     if self.tick % TICK_ANIMATION == 0:
@@ -70,7 +68,6 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.tick += 1
   
   def collide(self, ball):
-    ball.y_direction *= -1
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
@@ -144,7 +141,7 @@ class Player(pygame.sprite.Sprite):
     elif self.rect.right > co.SCREEN_WIDHT:
       self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
 
-  def update(self):
+  def update(self, *args, **kwargs):
     TICK_CHANGE = 6
     if self.state == self.IDLE_RIGHT:
       if self.tick == TICK_CHANGE:
@@ -231,10 +228,32 @@ class Ball(pygame.sprite.Sprite):
     self.x_speed = self.SPEED * math.cos(math.pi / 2)
     self.y_speed = self.SPEED * math.sin(math.pi / 2)
 
-  def update(self):
-    # movement
-    self.rect.left += self.x_speed
+  def update(self, *args, **kwargs):
+    target_sprites = kwargs['target_sprites']
+    # vertical movement
     self.rect.top += self.y_speed * self.y_direction
+    collided = pygame.sprite.spritecollide(self, target_sprites, False)
+    for c in collided:
+      c.collide(self)
+      if self.y_direction > 0: # Moving down
+        self.rect.bottom = c.rect.top - 1
+      else: # Moving up
+        self.rect.top = c.rect.bottom + 1
+      self.reverse_vertical_movement()
+      break # takes in account only the first collision
+    
+    # horizontal movement
+    self.rect.left += self.x_speed
+    collided = pygame.sprite.spritecollide(self, target_sprites, False)
+    for c in collided:
+      c.collide(self)
+      if self.x_speed > 0: # Moving right
+        self.rect.right = c.rect.left - 1
+        self.reverse_horizontal_movement()
+      elif self.x_speed < 0: # Moving left
+        self.rect.left = c.rect.right + 1
+        self.reverse_horizontal_movement()
+    
     # animation
     TICK_CHANGE = 12
     if self.tick == TICK_CHANGE:
@@ -294,7 +313,7 @@ class MagicalBar(pygame.sprite.Sprite):
     self.frame_count = 0
     self.angle_pointer = angle_pointer
 
-  def update(self):
+  def update(self, *args, **kwargs):
     TICK_CHANGE = 12
     if self.tick == TICK_CHANGE:
       self.tick = 0
@@ -333,7 +352,7 @@ class AnglePointer(pygame.sprite.Sprite):
     self.rect = rotated_rect
     self.image = rotated_img
   
-  def update(self):
+  def update(self, *args, **kwargs):
     # angle update
     angle_step = math.pi / 30
     new_angle = None
@@ -346,7 +365,6 @@ class AnglePointer(pygame.sprite.Sprite):
     if new_angle:
       self.angle = new_angle
       self.update_image()
-    
  
 class InanimateProjectile(pygame.sprite.Sprite):
   def __init__(self, image_path, speed, centerx, top):
@@ -366,7 +384,7 @@ class InanimateProjectile(pygame.sprite.Sprite):
     self.visible = False
     self.rect.topleft = (-self.rect.w - 5, -self.rect.h - 5)
 
-  def update(self):
+  def update(self, *args, **kwargs):
     if self.visible:
       self.rect.y += self.speed
     if self.rect.y > co.SCREEN_HEIGHT:
