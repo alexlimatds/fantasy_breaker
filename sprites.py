@@ -253,6 +253,7 @@ class Ball(pygame.sprite.Sprite):
       elif self.x_speed < 0: # Moving left
         self.rect.left = c.rect.right + 1
         self.reverse_horizontal_movement()
+      break # takes in account only the first collision
     
     # animation
     TICK_CHANGE = 12

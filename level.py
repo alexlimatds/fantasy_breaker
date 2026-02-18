@@ -94,8 +94,6 @@ def run(level, player, enemies, blocks):
     if game_state == ON_START:
       for a in attacks:
         a.hide()
-      player.to_initial_stance()
-      player.update()
       txt_start_1 = font_msgs.render('GET READY!', True, 'red')
       txt_start_2 = font_msgs.render(f'{start_count}', True, 'red')
       now = pygame.time.get_ticks()
@@ -113,6 +111,8 @@ def run(level, player, enemies, blocks):
         game_state = ON_START
         start_count = 4
         game.center_player_and_ball(player, ball)
+        player.to_initial_stance()
+        player.update()
     elif game_state == IN_GAME:
       arena.check_bump(ball)
       defeated = False
