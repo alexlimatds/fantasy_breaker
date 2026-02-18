@@ -92,7 +92,7 @@ def run(level, player, enemies, blocks):
     if game_state == ON_START:
       for a in attacks:
         a.hide()
-      player.state = player.IDLE_RIGHT
+      player.to_initial_stance()
       player.update()
       txt_start_1 = font_msgs.render('GET READY!', True, 'red')
       txt_start_2 = font_msgs.render(f'{start_count}', True, 'red')

@@ -89,9 +89,7 @@ class Player(pygame.sprite.Sprite):
     self.running_left_frames = [pygame.transform.flip(img, True, False) for img in self.running_right_frames]
     self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
     # initial state
-    self.image = self.idle_right_frames[0]
-    self.rect = self.image.get_rect()
-    self.mask = self.idle_right_masks[0]
+    self.rect = self.idle_right_frames[0].get_rect()
     self.lives = lives
     self.speed = 7
     self.magical_bar = magical_bar
@@ -100,10 +98,17 @@ class Player(pygame.sprite.Sprite):
     self.IDLE_LEFT = 1
     self.RUNNING_LEFT = 2
     self.RUNNING_RIGHT = 3
+    self.to_initial_stance()
+  
+  def to_initial_stance(self):
+    self.image = self.idle_right_frames[0]
+    self.mask = self.idle_right_masks[0]
+    self.RUNNING_RIGHT = 3
     self.state = self.IDLE_RIGHT
     self.frame_count = 0
     self.tick = 1
-  
+    self.magical_bar.angle_pointer.to_initial_angle()
+
   def move_to(self, x, y):
     self.rect.topleft = (x, y)
     self.magical_bar.rect.centerx = self.rect.centerx
@@ -196,7 +201,7 @@ class Ball(pygame.sprite.Sprite):
       2: self.median_mask, 
       3: self.strong_mask
     }
-    # initiantinf state
+    # initiating state
     self.frames = self.weak_frames
     self.image = self.frames[0]
     self.mask = self.weak_mask
@@ -222,8 +227,8 @@ class Ball(pygame.sprite.Sprite):
 
   def reset_movement(self):
     self.y_direction = -1  # 1 for down, -1 for up
-    self.x_speed = self.SPEED * math.cos(math.pi / 4)
-    self.y_speed = self.SPEED * math.sin(math.pi / 4)
+    self.x_speed = self.SPEED * math.cos(math.pi / 2)
+    self.y_speed = self.SPEED * math.sin(math.pi / 2)
 
   def update(self):
     # movement
@@ -305,13 +310,27 @@ class MagicalBar(pygame.sprite.Sprite):
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.image.load('assets/angle_pointer.png').convert_alpha()
-    self.original_image = self.image
+    self.original_image = pygame.image.load('assets/angle_pointer.png').convert_alpha()
+    self.image = self.original_image
     self.rect = self.image.get_rect()
-    self.angle = math.pi / 2
+    self.to_initial_angle()
     self.increase = False
     self.decrease = False
     self.update()
+
+  def to_initial_angle(self):
+    self.angle = math.pi / 2
+    self.update_image()
+  
+  def update_image(self):
+    rotated_img = pygame.transform.rotate(
+      self.original_image, 
+      math.degrees(self.angle - math.pi / 2)
+    )
+    # Get a new rect with the old center
+    rotated_rect = rotated_img.get_rect(center=self.rect.center) 
+    self.rect = rotated_rect
+    self.image = rotated_img
   
   def update(self):
     # angle update
@@ -323,17 +342,10 @@ class AnglePointer(pygame.sprite.Sprite):
     elif self.decrease:
       alpha = max(self.angle - angle_step, math.pi / 4)
       new_angle = alpha
-    # image update
     if new_angle:
       self.angle = new_angle
-      rotated_img = pygame.transform.rotate(
-        self.original_image, 
-        math.degrees(self.angle - math.pi / 2)
-      )
-      # Get a new rect with the old center
-      rotated_rect = rotated_img.get_rect(center=self.rect.center) 
-      self.rect = rotated_rect
-      self.image = rotated_img
+      self.update_image()
+    
  
 class InanimateProjectile(pygame.sprite.Sprite):
   def __init__(self, image_path, speed, centerx, top):
