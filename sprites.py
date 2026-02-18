@@ -20,6 +20,26 @@ class BrickBlock(pygame.sprite.Sprite):
     else:
       self.image = self.frames[1]
 
+class ConcreteBlock(pygame.sprite.Sprite):
+  def __init__(self, center_x, y):
+    pygame.sprite.Sprite.__init__(self)
+    self.frames = game.load_grid_images('assets/concrete_block_sheet.png', 110, 30, 3, 1)
+    self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
+    self.image = self.frames[0]
+    self.rect = self.image.get_rect()  
+    self.rect.midtop = (center_x, y)
+    self.hit_points = 4
+  
+  def collide(self, ball):
+    ball.y_direction *= -1
+    self.hit_points -= ball.strength
+    if self.hit_points <= 0:
+      self.kill()
+    elif 3 <= self.hit_points <= 4:
+      self.image = self.frames[1]
+    else:
+      self.image = self.frames[2]
+
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
     pygame.sprite.Sprite.__init__(self)
