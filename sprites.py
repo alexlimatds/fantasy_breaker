@@ -5,8 +5,9 @@ import constants as co
 class BrickBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.image.load('assets/brick_block.png').convert_alpha()
-    self.image = pygame.transform.scale(self.image, (55, 30))
+    self.frames = game.load_grid_images('assets/brick_block_sheet.png', 110, 30, 2, 1)
+    self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
+    self.image = self.frames[0]
     self.rect = self.image.get_rect()  
     self.rect.midtop = (center_x, y)
     self.hit_points = 2
@@ -16,6 +17,8 @@ class BrickBlock(pygame.sprite.Sprite):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
+    else:
+      self.image = self.frames[1]
 
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
