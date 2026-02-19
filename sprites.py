@@ -410,21 +410,41 @@ class AmberBossGoblin(pygame.sprite.Sprite):
     self.tick = random.randint(0, 110)
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
     self.attack = game.create_big_dagger(self.rect.centerx, self.rect.bottom + 5)
+    # red_idle_frames are used to indicate that the 
+    # boss suffered a hit
+    red_overlay = self.mask.to_surface(
+      setcolor=(255, 0, 0, 50), 
+      unsetcolor=(0, 0, 0, 0)
+    )
+    self.red_idle_frames = []
+    for img in self.idle_frames:
+      img = img.copy()
+      img.blit(red_overlay, (0, 0))
+      self.red_idle_frames.append(img)
+    self.tick_hit = 0 # to control exibition of red_idle_frames
 
   def update(self, *args, **kwargs):
     TICK_ANIMATION = 6
     TICK_PROJECTILE = 120
     if self.tick % TICK_ANIMATION == 0:
-      self.image = self.idle_frames[self.frame_count]
+      if self.tick_hit > 0:
+        self.image = self.red_idle_frames[self.frame_count]
+      else:
+        self.image = self.idle_frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.idle_frames)
     if self.tick % TICK_PROJECTILE == 0:
       self.attack.throw()
     self.tick += 1
+    self.tick_hit -= 1
   
   def collide(self, ball):
-    self.hit_points -= ball.strength
-    if self.hit_points <= 0:
-      self.kill()
+    # this boss is imune to the weak boss
+    if ball.strength > 1:
+      self.image = self.red_idle_frames[self.frame_count]
+      self.tick_hit = 10
+      self.hit_points -= ball.strength
+      if self.hit_points <= 0:
+        self.kill()
     
 class PurpleCrystal(pygame.sprite.Sprite):
   def __init__(self, topleft):

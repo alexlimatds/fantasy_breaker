@@ -9,7 +9,7 @@ def run(player):
   :param player: An instance of sprites.Player.
   '''
   ## SPRITES ##
-  e = sprites.AmberGoblin(-100, 0)
+  e = sprites.AmberBossGoblin(co.SCREEN_WIDHT / 2 - 15, 15)
   enemies = pygame.sprite.Group(e)
   x = 500
   blocks = pygame.sprite.Group()
@@ -18,7 +18,7 @@ def run(player):
     b.hit_points = 1000
     blocks.add(b)
   
-  power_ups = pygame.sprite.Group(sprites.PurpleCrystal((co.SCREEN_WIDHT/2, 200)))
+  power_ups = pygame.sprite.Group(sprites.PurpleCrystal((co.SCREEN_WIDHT/2 + 50, 200)))
   ## RUN LEVEL ##
   level.run('Test', player, enemies, blocks, power_ups=power_ups)
 
