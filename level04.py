@@ -14,6 +14,7 @@ def run(player):
   y = 15
   enemy = sprites.AmberBossGoblin(co.SCREEN_WIDHT / 2, y)
   enemies.add(enemy)
+  
   y += enemy.rect.h + 15
   x = 1
   block = sprites.BrickBlock(0, y)
@@ -71,10 +72,13 @@ def run(player):
   block.rect.left = x
   blocks.add(block)
 
+  power_ups = pygame.sprite.Group()
+  power_ups.add(sprites.PurpleCrystal((10, y)))
+
   enemy = None
   block = None
   ## RUN LEVEL ##
-  level.run(4, player, enemies, blocks)
+  level.run(4, player, enemies, blocks, power_ups=power_ups)
 
 def main():
   # Run this function to test the level

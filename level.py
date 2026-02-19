@@ -2,14 +2,15 @@ import game, pygame, sys
 import constants as co
 import sprites
 
-def run(level, player, enemies, blocks):
+def run(level, player, enemies, blocks, power_ups=None):
   '''
   This function contains all the logic to run a level. 
   
   :param level: The number or name of the level.
   :param player: An instance of sprites.Player.
-  :param enemies: A pygame.sprite.Group holdin the level's enemies.
-  :param blocks: A pygame.sprite.Group holdin the level's blocks.
+  :param enemies: A pygame.sprite.Group holding the level's enemies.
+  :param blocks: A pygame.sprite.Group holding the level's blocks.
+  :param power_ups: A pygame.sprite.Group holding the level's power ups.
   '''
   ## VARIABLES ##
   IN_GAME = 0
@@ -49,6 +50,8 @@ def run(level, player, enemies, blocks):
   all_sprites.add(blocks)
   targets = blocks.copy()
   targets.add(enemies)
+  if power_ups:
+    all_sprites.add(power_ups)
 
   ## GAME LOOP ##
   start_time = pygame.time.get_ticks()
@@ -135,6 +138,10 @@ def run(level, player, enemies, blocks):
         c.collide(ball)
       # collision among ball and enemies
       collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
+      for c in collided:
+        c.collide(ball)
+      # collision among ball and power ups
+      collided = pygame.sprite.spritecollide(ball, power_ups, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(ball)
       if len(enemies) == 0:

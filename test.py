@@ -17,8 +17,10 @@ def run(player):
     b = sprites.ConcreteBlock(x + i * 55, 300)
     b.hit_points = 1000
     blocks.add(b)
+  
+  power_ups = pygame.sprite.Group(sprites.PurpleCrystal((co.SCREEN_WIDHT/2, 200)))
   ## RUN LEVEL ##
-  level.run('Test', player, enemies, blocks)
+  level.run('Test', player, enemies, blocks, power_ups=power_ups)
 
 def main():
   # Run this function to test the level

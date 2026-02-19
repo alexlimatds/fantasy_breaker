@@ -216,6 +216,7 @@ class Ball(pygame.sprite.Sprite):
       self.strength += 1
       self.frames = self.dic_frames[self.strength]
       self.mask = self.dic_masks[self.strength]
+      self.rect.size = self.frames[0].get_rect().size
   
   def decrease_strength(self):
     if self.strength > 1:
@@ -323,10 +324,10 @@ class MagicalBar(pygame.sprite.Sprite):
     self.tick += 1
   
   def collide(self, ball):
+    ball.rect.bottom = self.rect.top - 1
     ball.x_speed = ball.SPEED * math.cos(self.angle_pointer.angle)
     ball.y_speed = ball.SPEED * math.sin(self.angle_pointer.angle)
     ball.reverse_vertical_movement()
-    ball.rect.bottom = self.rect.top - 1
 
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
@@ -424,3 +425,30 @@ class AmberBossGoblin(pygame.sprite.Sprite):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
+    
+class PurpleCrystal(pygame.sprite.Sprite):
+  def __init__(self, topleft):
+    pygame.sprite.Sprite.__init__(self)
+    FRAME_DIM = 30
+    self.frames = game.load_grid_images('assets/purple_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
+    self.image = self.frames[0]
+    self.mask = pygame.mask.from_surface(self.frames[0])
+    self.rect = self.image.get_rect()
+    if topleft:
+      self.rect.topleft = topleft
+    # animation
+    self.tick = 1
+    self.frame_count = 0
+
+  def update(self, *args, **kwargs):
+    # animation
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
+  
+  def collide(self, ball):
+    ball.increase_strength()
+    self.kill()
