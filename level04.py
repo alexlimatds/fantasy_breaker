@@ -62,18 +62,29 @@ def run(player):
   x += 400
   blocks.add(sprites.BrickBlock(x, y))
 
-  y = 50
-  x = 1 + block_w + 5
+  y = 24
+  x1 = 1 + block_w + 5
+  x2 = co.SCREEN_WIDHT - (1 + block_w + 5) * 2
   block = sprites.BrickBlock(0, y)
-  block.rect.left = x
+  block.rect.left = x1
   blocks.add(block)
-  x = co.SCREEN_WIDHT - (1 + block_w + 5) * 2
+  
   block = sprites.BrickBlock(0, y)
-  block.rect.left = x
+  block.rect.left = x2
   blocks.add(block)
 
   power_ups = pygame.sprite.Group()
-  power_ups.add(sprites.PurpleCrystal((10, y)))
+  power_ups.add(sprites.PurpleCrystal((10, y + 20)))
+  power_ups.add(sprites.GreenCrystal((co.SCREEN_WIDHT - 40, y + 20)))
+
+  y += block_h + 10
+  block = sprites.BrickBlock(0, y)
+  block.rect.left = x1
+  blocks.add(block)
+  
+  block = sprites.BrickBlock(0, y)
+  block.rect.left = x2
+  blocks.add(block)
 
   enemy = None
   block = None
