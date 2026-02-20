@@ -4,4 +4,4 @@ import util, level01, level02, level03, level04
 game = gm.Game()
 game.player = util.create_player(3)
 
-level01.run(game)
+level04.run(game)
