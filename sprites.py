@@ -469,7 +469,7 @@ class PurpleCrystal(pygame.sprite.Sprite):
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     self.tick += 1
   
-  def collide(self, *sprites):
+  def collide(self, sprites):
     for s in sprites:
       if isinstance (s, Ball):
         s.increase_strength()

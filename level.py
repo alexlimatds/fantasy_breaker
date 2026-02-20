@@ -143,7 +143,7 @@ def run(level, player, enemies, blocks, power_ups=None):
       # collision among ball and power ups
       collided = pygame.sprite.spritecollide(ball, power_ups, False, pygame.sprite.collide_mask)
       for c in collided:
-        c.collide(ball)
+        c.collide(all_sprites)
       if len(enemies) == 0:
         game_state = VICTORY
       # checking defeat
