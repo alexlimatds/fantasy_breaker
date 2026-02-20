@@ -12,20 +12,6 @@ import constants as co
 # https://beast-pixels.itch.io/crafting-materials
 # https://petraheim.itch.io/breakout-pixelart
 
-
-
-def center_player_and_ball(player, ball):
-  player.move_to(
-    co.SCREEN_WIDHT / 2 - player.rect.w / 2, 
-    co.SCREEN_HEIGHT - player.rect.h - 5
-  )
-  t = player.rect.topleft
-  ball.rect.topleft = (
-    t[0] + player.rect.width / 2 + 5, 
-    t[1] - 60
-  )
-  ball.reset_movement()
-
 def draw_msg(surface_txt, vertical_margin = 0):
   screen.blit(
     surface_txt, 

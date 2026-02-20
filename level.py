@@ -1,6 +1,6 @@
 import game, pygame, sys
 import constants as co
-import sprites
+import sprites, util
 
 def run(level, player, enemies, blocks, power_ups=None):
   '''
@@ -40,7 +40,7 @@ def run(level, player, enemies, blocks, power_ups=None):
   angle_pointer = magical_bar.angle_pointer
   ball = sprites.Ball()
   all_sprites.add([player, ball, magical_bar, angle_pointer])
-  game.center_player_and_ball(player, ball)
+  util.center_player_and_ball(player, ball)
   attacks = pygame.sprite.Group()
   for enemy in enemies:
     attack = enemy.attack
@@ -113,7 +113,7 @@ def run(level, player, enemies, blocks, power_ups=None):
         lost_time = now
         game_state = ON_START
         start_count = 4
-        game.center_player_and_ball(player, ball)
+        util.center_player_and_ball(player, ball)
         player.to_initial_stance()
         player.update()
     elif game_state == IN_GAME:
