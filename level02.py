@@ -1,5 +1,4 @@
-import game, pygame, level
-import constants as co
+import util, pygame, level
 import sprites
 
 def run(player):
@@ -11,13 +10,13 @@ def run(player):
   ## SPRITES ##
   enemies = pygame.sprite.Group()
   y = 30
-  enemy, _ = game.create_amber_goblin(230, y)
+  enemy, _ = util.create_amber_goblin(230, y)
   enemies.add(enemy)
-  enemy, _ = game.create_amber_goblin(570, y)
+  enemy, _ = util.create_amber_goblin(570, y)
   enemies.add(enemy)
   y = 200
   for i in range(150, 800, 250):
-    enemy, _ = game.create_amber_goblin(i, y)
+    enemy, _ = util.create_amber_goblin(i, y)
     enemies.add(enemy)
   enemy = None
   

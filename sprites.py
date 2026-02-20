@@ -1,10 +1,10 @@
-import pygame, game, math, random
+import pygame, util, math, random
 import constants as co
 
 class BrickBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
-    self.frames = game.load_grid_images('assets/brick_block_sheet.png', 110, 30, 2, 1)
+    self.frames = util.load_grid_images('assets/brick_block_sheet.png', 110, 30, 2, 1)
     self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
     self.image = self.frames[0]
     self.rect = self.image.get_rect()
@@ -22,7 +22,7 @@ class BrickBlock(pygame.sprite.Sprite):
 class ConcreteBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
-    self.frames = game.load_grid_images('assets/concrete_block_sheet.png', 110, 30, 3, 1)
+    self.frames = util.load_grid_images('assets/concrete_block_sheet.png', 110, 30, 3, 1)
     self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
     self.image = self.frames[0]
     self.rect = self.image.get_rect()
@@ -55,7 +55,7 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.hit_points = 1
     self.tick = random.randint(0, 110)
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
-    self.attack = game.create_dagger(self.rect.centerx, self.rect.bottom + 5)
+    self.attack = util.create_dagger(self.rect.centerx, self.rect.bottom + 5)
 
   def update(self, *args, **kwargs):
     TICK_ANIMATION = 6
@@ -77,12 +77,12 @@ class Player(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 115
     # idle frames
-    self.idle_right_frames = game.load_grid_images('assets/player_idle_sheet.png', FRAME_DIM, FRAME_DIM, 6, 1)
+    self.idle_right_frames = util.load_grid_images('assets/player_idle_sheet.png', FRAME_DIM, FRAME_DIM, 6, 1)
     self.idle_right_masks = [pygame.mask.from_surface(img) for img in self.idle_right_frames]
     self.idle_left_frames = [pygame.transform.flip(img, True, False) for img in self.idle_right_frames]
     self.idle_left_masks = [pygame.mask.from_surface(img) for img in self.idle_left_frames]
     # running frames
-    self.running_right_frames = game.load_grid_images('assets/player_run_right_sheet.png', FRAME_DIM, FRAME_DIM, 8, 1)
+    self.running_right_frames = util.load_grid_images('assets/player_run_right_sheet.png', FRAME_DIM, FRAME_DIM, 8, 1)
     self.running_right_masks = [pygame.mask.from_surface(img) for img in self.running_right_frames]
     self.running_left_frames = [pygame.transform.flip(img, True, False) for img in self.running_right_frames]
     self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
@@ -182,7 +182,7 @@ class Ball(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     BALL_DIM = 40
     # loading frames
-    original_frames = game.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
+    original_frames = util.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
     self.strong_frames = original_frames.copy()
     self.median_frames = [pygame.transform.scale_by(f, 0.6) for f in original_frames]
     self.weak_frames = [pygame.transform.scale_by(f, 0.3) for f in original_frames]
@@ -306,7 +306,7 @@ class MagicalBar(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     FRAME_WIDTH = 90
     FRAME_HEIGHT = 7
-    self.frames = game.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
+    self.frames = util.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
     self.masks = [pygame.mask.from_surface(img) for img in self.frames]
     self.image = self.frames[0]
     self.mask = self.masks[0]
@@ -409,7 +409,7 @@ class AmberBossGoblin(pygame.sprite.Sprite):
     self.hit_points = 10
     self.tick = random.randint(0, 110)
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
-    self.attack = game.create_big_dagger(self.rect.centerx, self.rect.bottom + 5)
+    self.attack = util.create_big_dagger(self.rect.centerx, self.rect.bottom + 5)
     # red_idle_frames are used to indicate that the 
     # boss suffered a hit
     red_overlay = self.mask.to_surface(
@@ -450,7 +450,7 @@ class PurpleCrystal(pygame.sprite.Sprite):
   def __init__(self, topleft):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 30
-    self.frames = game.load_grid_images('assets/purple_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
+    self.frames = util.load_grid_images('assets/purple_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
     self.image = self.frames[0]
     self.mask = pygame.mask.from_surface(self.frames[0])
     self.rect = self.image.get_rect()
@@ -480,7 +480,7 @@ class GreenCrystal(pygame.sprite.Sprite):
   def __init__(self, topleft):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 30
-    self.frames = game.load_grid_images('assets/green_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
+    self.frames = util.load_grid_images('assets/green_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
     self.image = self.frames[0]
     self.mask = pygame.mask.from_surface(self.frames[0])
     self.rect = self.image.get_rect()

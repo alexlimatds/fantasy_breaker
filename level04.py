@@ -1,4 +1,4 @@
-import game, pygame, level
+import util, pygame, level
 import constants as co
 import sprites
 
@@ -49,10 +49,10 @@ def run(player):
 
   y += 10
   x = co.SCREEN_WIDHT / 2 - 200
-  enemy = game.create_amber_goblin(x, y)[0]
+  enemy = util.create_amber_goblin(x, y)[0]
   enemies.add(enemy)
   x += 400
-  enemies.add(game.create_amber_goblin(x, y)[0])
+  enemies.add(util.create_amber_goblin(x, y)[0])
   
   y += enemy.rect.h + 10
   x = co.SCREEN_WIDHT / 2
