@@ -1,6 +1,5 @@
 import util, pygame, level, sprites
 import constants as co
-import game as gm
 
 def run(game):
   '''
@@ -40,12 +39,3 @@ def run(game):
   b = None
   ## RUN LEVEL ##
   level.run(3, game, enemies, blocks)
-
-def main():
-  # Run this function to test the level
-  game = gm.Game()
-  game.player = util.create_player(3)
-  run(game)
-
-if __name__ == "__main__":
-  main()

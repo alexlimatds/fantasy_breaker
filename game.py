@@ -1,5 +1,6 @@
-import pygame, sprites
+import pygame, util
 import constants as co
+import level01, level02, level03, level04
 
 # https://opengameart.org/content/700-rpg-icons
 # https://opengameart.org/content/dungeon-crawl-32x32-tiles
@@ -40,3 +41,16 @@ class Game:
         5
       )
     )
+  
+  def start(self):
+    self.player = util.create_player(3)
+    level01.run(self)
+    level02.run(self)
+    level03.run(self)
+    level04.run(self)
+
+def main():
+  Game().start()
+
+if __name__ == "__main__":
+  main()

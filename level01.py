@@ -1,5 +1,4 @@
 import util, pygame, level, sprites
-import game as gm
 
 def run(game):
   '''
@@ -20,12 +19,3 @@ def run(game):
     blocks.add(sprites.BrickBlock(i + 40, y + 100))
   ## RUN LEVEL ##
   level.run(1, game, enemies, blocks)
-
-def main():
-  # Run this function to test the level
-  game = gm.Game()
-  game.player = util.create_player(3)
-  run(game)
-
-if __name__ == "__main__":
-  main()
