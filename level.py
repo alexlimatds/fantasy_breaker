@@ -141,6 +141,8 @@ def run(level, player, enemies, blocks, power_ups=None):
       for c in collided:
         c.collide(ball)
       # collision among ball and power ups
+      if not power_ups:
+        power_ups = []
       collided = pygame.sprite.spritecollide(ball, power_ups, False, pygame.sprite.collide_mask)
       for c in collided:
         c.collide(all_sprites)
