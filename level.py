@@ -1,13 +1,12 @@
-import game, pygame, sys
-import constants as co
+import pygame, sys
 import sprites, util
 
-def run(level, player, enemies, blocks, power_ups=None):
+def run(level, game, enemies, blocks, power_ups=None):
   '''
   This function contains all the logic to run a level. 
   
   :param level: The number or name of the level.
-  :param player: An instance of sprites.Player.
+  :param player: An instance of game.Game.
   :param enemies: A pygame.sprite.Group holding the level's enemies.
   :param blocks: A pygame.sprite.Group holding the level's blocks.
   :param power_ups: A pygame.sprite.Group holding the level's power ups.
@@ -34,6 +33,7 @@ def run(level, player, enemies, blocks, power_ups=None):
   txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
 
   ## SPRITES ##
+  player = game.player
   all_sprites = pygame.sprite.Group()
   arena = sprites.Arena()
   magical_bar = player.magical_bar

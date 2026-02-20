@@ -68,3 +68,8 @@ def create_amber_boss_goblin(center_x, top):
   goblin = sp.AmberBossGoblin(center_x, top)
   dagger = goblin.attack
   return goblin, dagger
+
+def create_player(lives):
+  angle_pointer = sp.AnglePointer()
+  magical_bar = sp.MagicalBar(angle_pointer)
+  return sp.Player(magical_bar, lives)

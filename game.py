@@ -12,29 +12,31 @@ import constants as co
 # https://beast-pixels.itch.io/crafting-materials
 # https://petraheim.itch.io/breakout-pixelart
 
-def draw_msg(surface_txt, vertical_margin = 0):
-  screen.blit(
-    surface_txt, 
-    (
-      co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
-      co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
+class Game:
+  def __init__(self):
+    ### INITIALIZATION ###
+    pygame.init()
+    self.screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
+    pygame.display.set_caption("Fantasy Breaker")
+    self.clock = pygame.time.Clock()
+
+  def draw_msg(self, surface_txt, vertical_margin = 0):
+    self.screen.blit(
+      surface_txt, 
+      (
+        co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
+        co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
+      )
     )
-  )
 
-def draw_txt_level(surface_txt):
-  screen.blit(surface_txt, (5, 5))
+  def draw_txt_level(self, surface_txt):
+    self.screen.blit(surface_txt, (5, 5))
 
-def draw_txt_lives(surface_txt):
-  screen.blit(
-    surface_txt, 
-    (
-      co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
-      5
+  def draw_txt_lives(self, surface_txt):
+    self.screen.blit(
+      surface_txt, 
+      (
+        co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
+        5
+      )
     )
-  )
-
-### INITIALIZATION ###
-pygame.init()
-screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
-pygame.display.set_caption("Fantasy Breaker")
-clock = pygame.time.Clock()

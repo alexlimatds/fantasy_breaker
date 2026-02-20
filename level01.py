@@ -1,11 +1,11 @@
-import util, pygame, level
-import sprites
+import util, pygame, level, sprites
+import game as gm
 
-def run(player):
+def run(game):
   '''
   Defines the sprites of Level 01 and execute it
   
-  :param player: An instance of sprites.Player.
+  :param game: An instance of game.Game
   '''
   ## SPRITES ##
   enemies = pygame.sprite.Group()
@@ -19,14 +19,13 @@ def run(player):
     blocks.add(sprites.BrickBlock(i - 40, y + 100))
     blocks.add(sprites.BrickBlock(i + 40, y + 100))
   ## RUN LEVEL ##
-  level.run(1, player, enemies, blocks)
+  level.run(1, game, enemies, blocks)
 
 def main():
   # Run this function to test the level
-  angle_pointer = sprites.AnglePointer()
-  magical_bar = sprites.MagicalBar(angle_pointer)
-  player = sprites.Player(magical_bar, 3)
-  run(player)
+  game = gm.Game()
+  game.player = util.create_player(3)
+  run(game)
 
 if __name__ == "__main__":
   main()
