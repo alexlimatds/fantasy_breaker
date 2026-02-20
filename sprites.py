@@ -475,3 +475,33 @@ class PurpleCrystal(pygame.sprite.Sprite):
         s.increase_strength()
         self.kill()
         return
+      
+class GreenCrystal(pygame.sprite.Sprite):
+  def __init__(self, topleft):
+    pygame.sprite.Sprite.__init__(self)
+    FRAME_DIM = 30
+    self.frames = game.load_grid_images('assets/green_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
+    self.image = self.frames[0]
+    self.mask = pygame.mask.from_surface(self.frames[0])
+    self.rect = self.image.get_rect()
+    if topleft:
+      self.rect.topleft = topleft
+    # animation
+    self.tick = 1
+    self.frame_count = 0
+
+  def update(self, *args, **kwargs):
+    # animation
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
+  
+  def collide(self, sprites):
+    for s in sprites:
+      if isinstance (s, Player):
+        s.lives += 1
+        self.kill()
+        return
