@@ -33,23 +33,27 @@ def run(level, game, enemies, blocks, power_ups=None):
   txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
 
   ## SPRITES ##
-  player = game.player
-  all_sprites = pygame.sprite.Group()
   arena = sprites.Arena()
+  all_sprites = pygame.sprite.Group()
+  # Player, pointer and bar
+  player = game.player
   magical_bar = player.magical_bar
   angle_pointer = magical_bar.angle_pointer
   ball = sprites.Ball()
   all_sprites.add([player, ball, magical_bar, angle_pointer])
   util.center_player_and_ball(player, ball)
+  # Enemies and attacks
   attacks = pygame.sprite.Group()
   for enemy in enemies:
     attack = enemy.attack
     all_sprites.add([enemy, attack])
     attacks.add(attack)
   enemy, attack = None, None
+  # Blocks
   all_sprites.add(blocks)
-  targets = blocks.copy()
-  targets.add(enemies)
+  reboundig_sprites = blocks.copy()
+  reboundig_sprites.add(enemies)
+  # Power Ups
   if power_ups:
     all_sprites.add(power_ups)
 
@@ -119,46 +123,34 @@ def run(level, game, enemies, blocks, power_ups=None):
     elif game_state == IN_GAME:
       defeated = False
       all_sprites.update()
-      ball.move(targets)
-      arena.check_bump(ball)
-      # collision between ball and player
-      collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
-      bellow_screen = arena.below_screen(ball)
-      if collided or bellow_screen:
-        defeated = True
-      # collision between ball and magical bar
-      collided = pygame.sprite.spritecollide(ball, [magical_bar], False, pygame.sprite.collide_mask)
-      if collided:
-        magical_bar.collide(ball)
-      # collision among player and attacks
-      collided = pygame.sprite.spritecollide(player, attacks, False, pygame.sprite.collide_mask)
-      if collided:
-        defeated = True
-      # collision among ball and blocks
-      collided = pygame.sprite.spritecollide(ball, blocks, False, pygame.sprite.collide_mask)
-      for c in collided:
-        c.collide(ball)
-      # collision among ball and enemies
-      collided = pygame.sprite.spritecollide(ball, enemies, False, pygame.sprite.collide_mask)
-      for c in collided:
-        c.collide(ball)
-      # collision among ball and power ups
-      if power_ups:
-        collided = pygame.sprite.spritecollide(ball, power_ups, False, pygame.sprite.collide_mask)
-        for c in collided:
-          c.collide(all_sprites)
-      # checking victory
-      if len(enemies) == 0:
-        game_state = VICTORY
-      # checking defeat
-      if defeated and player.lives == 1:
-        player.lives = 0
-        game_state = GAME_OVER
-      elif defeated and player.lives > 1:
+      ball.move(reboundig_sprites) # manages collision with blocks and enemies
+      arena.check_bump(ball)       # manages collision with screen boundaries
+      # defeat conditions
+      defeated = (
+        arena.below_screen(ball) or 
+        pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask) or # ball collided the player
+        pygame.sprite.spritecollide(player, attacks, False, pygame.sprite.collide_mask)   # an attack collided the player
+      )
+      if defeated:
         player.lives -= 1
-        game_state = LOST_LIFE
-        lost_time = pygame.time.get_ticks()
-      #all_sprites.update(target_sprites=targets)
+        if player.lives == 0:
+          game_state = GAME_OVER
+        else:
+          game_state = LOST_LIFE
+          lost_time = pygame.time.get_ticks()
+      else:
+        # collision between ball and magical bar
+        if pygame.sprite.spritecollide(ball, [magical_bar], False, pygame.sprite.collide_mask):
+          magical_bar.collide(ball)
+        # collision among ball and power ups
+        if power_ups:
+          collided = pygame.sprite.spritecollide(ball, power_ups, False, pygame.sprite.collide_mask)
+          for c in collided:
+            c.collide(all_sprites)
+        # checking victory
+        if len(enemies) == 0:
+          game_state = VICTORY
+      
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
