@@ -42,12 +42,11 @@ class ConcreteBlock(pygame.sprite.Sprite):
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
     pygame.sprite.Sprite.__init__(self)
-    self.idle_frames = [
-      pygame.image.load('assets/amber_goblin_idle_frame_000.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_002.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_003.png').convert_alpha()
-    ]
+    self.idle_frames = util.load_grid_images(
+      'assets/amber_goblin_idle_sheet.png', 
+      co.AMBLER_GOBLIN_FRAME_DIM, co.AMBLER_GOBLIN_FRAME_DIM, 
+      4, 1
+    )
     self.image = self.idle_frames[0]
     self.rect = self.image.get_rect()  
     self.mask = pygame.mask.from_surface(self.idle_frames[0])
@@ -408,12 +407,11 @@ class InanimateProjectile(pygame.sprite.Sprite):
 class AmberBossGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
     pygame.sprite.Sprite.__init__(self)
-    self.idle_frames = [
-      pygame.image.load('assets/amber_goblin_idle_frame_000.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_001.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_002.png').convert_alpha(), 
-      pygame.image.load('assets/amber_goblin_idle_frame_003.png').convert_alpha()
-    ]
+    self.idle_frames = util.load_grid_images(
+      'assets/amber_goblin_idle_sheet.png', 
+      co.AMBLER_GOBLIN_FRAME_DIM, co.AMBLER_GOBLIN_FRAME_DIM, 
+      4, 1
+    )
     self.idle_frames = [pygame.transform.scale_by(f, 2) for f in self.idle_frames]
     self.image = self.idle_frames[0]
     self.rect = self.image.get_rect()  
