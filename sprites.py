@@ -91,12 +91,13 @@ class Player(pygame.sprite.Sprite):
     self.lives = lives
     self.speed = 7
     self.magical_bar = magical_bar
-    # state variables
+    # animation
     self.IDLE_RIGHT = 0
     self.IDLE_LEFT = 1
     self.RUNNING_LEFT = 2
     self.RUNNING_RIGHT = 3
     self.to_initial_stance()
+    self.TICK_CHANGE = 6
   
   def to_initial_stance(self):
     self.image = self.idle_right_frames[0]
@@ -118,13 +119,13 @@ class Player(pygame.sprite.Sprite):
     if self.state != self.RUNNING_LEFT:
       self.state = self.RUNNING_LEFT
       self.frame_count = 0
-      self.tick = 1
+      self.tick = self.TICK_CHANGE
   
   def to_right(self):
     if self.state != self.RUNNING_RIGHT:
       self.state = self.RUNNING_RIGHT
       self.frame_count = 0
-      self.tick = 1
+      self.tick = self.TICK_CHANGE
 
   def to_idle(self):
     if self.state == self.RUNNING_RIGHT:
@@ -132,7 +133,7 @@ class Player(pygame.sprite.Sprite):
     else:
       self.state = self.IDLE_LEFT
     self.frame_count = 0
-    self.tick = 1
+    self.tick = self.TICK_CHANGE
   
   def _adjust_position(self):
     y = self.rect.y
@@ -145,19 +146,19 @@ class Player(pygame.sprite.Sprite):
     TICK_CHANGE = 6
     if self.state == self.IDLE_RIGHT:
       if self.tick == TICK_CHANGE:
-        self.tick = 0
+        self.tick = 1
         self.image = self.idle_right_frames[self.frame_count]
         self.mask = self.idle_right_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.idle_right_frames)
     elif self.state == self.IDLE_LEFT:
       if self.tick == TICK_CHANGE:
-        self.tick = 0
+        self.tick = 1
         self.image = self.idle_left_frames[self.frame_count]
         self.mask = self.idle_left_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.idle_left_frames)
     elif self.state == self.RUNNING_LEFT:
       if self.tick == TICK_CHANGE:
-        self.tick = 0
+        self.tick = 1
         self.image = self.running_left_frames[self.frame_count]
         self.mask = self.running_left_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_left_frames)
@@ -167,7 +168,7 @@ class Player(pygame.sprite.Sprite):
       self._adjust_position()
     elif self.state == self.RUNNING_RIGHT:
       if self.tick == TICK_CHANGE:
-        self.tick = 0
+        self.tick = 1
         self.image = self.running_right_frames[self.frame_count]
         self.mask = self.running_right_masks[self.frame_count]
         self.frame_count = (self.frame_count + 1) % len(self.running_right_frames)
