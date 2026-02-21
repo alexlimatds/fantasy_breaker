@@ -181,28 +181,32 @@ class Ball(pygame.sprite.Sprite):
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
     BALL_DIM = 40
-    # loading frames
+    # Loading frames
+    # The size of the ball changes according to its strength.
+    # Sice strength might be 1, 2 or 3, the ball might have 
+    # three sizes and hence there are three sets of frames and 
+    # three masks.
     original_frames = util.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
-    self.strong_frames = original_frames.copy()
-    self.median_frames = [pygame.transform.scale_by(f, 0.6) for f in original_frames]
-    self.weak_frames = [pygame.transform.scale_by(f, 0.3) for f in original_frames]
-    self.strong_mask = pygame.mask.from_surface(self.strong_frames[0])
-    self.median_mask = pygame.mask.from_surface(self.median_frames[0])
-    self.weak_mask = pygame.mask.from_surface(self.weak_frames[0])
+    strong_frames = original_frames.copy()
+    median_frames = [pygame.transform.scale_by(f, 0.6) for f in original_frames]
+    weak_frames = [pygame.transform.scale_by(f, 0.3) for f in original_frames]
+    strong_mask = pygame.mask.from_surface(strong_frames[0])
+    median_mask = pygame.mask.from_surface(median_frames[0])
+    weak_mask = pygame.mask.from_surface(weak_frames[0])
     self.dic_frames = {
-      1: self.weak_frames, 
-      2: self.median_frames, 
-      3: self.strong_frames
+      1: weak_frames, 
+      2: median_frames, 
+      3: strong_frames
     }
     self.dic_masks = {
-      1: self.weak_mask, 
-      2: self.median_mask, 
-      3: self.strong_mask
+      1: weak_mask, 
+      2: median_mask, 
+      3: strong_mask
     }
     # initiating state
-    self.frames = self.weak_frames
+    self.frames = weak_frames
     self.image = self.frames[0]
-    self.mask = self.weak_mask
+    self.mask = weak_mask
     self.rect = self.image.get_rect()
     self.SPEED = 5 * math.sqrt(2)
     self.reset_movement()
