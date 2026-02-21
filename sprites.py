@@ -254,19 +254,20 @@ class Ball(pygame.sprite.Sprite):
     # vertical movement
     self.rect.top += self.y_speed * self.y_direction
     collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
-    for c in collided:
+    if collided:
+      c = collided[0] # takes in account only one collision
       c.collide(self)
       if self.y_direction > 0: # Ball is moving down
         self.rect.bottom = c.rect.top - 1
       else: # Ball is moving up
         self.rect.top = c.rect.bottom + 1
       self.reverse_vertical_movement()
-      break # takes in account only the first collision
     
     # horizontal movement
     self.rect.left += self.x_speed
     collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
-    for c in collided:
+    if collided:
+      c = collided[0] # takes in account only one collision
       c.collide(self)
       if self.x_speed > 0: # Ball is moving right
         self.rect.right = c.rect.left - 1
@@ -274,7 +275,6 @@ class Ball(pygame.sprite.Sprite):
       elif self.x_speed < 0: # Ball is moving left
         self.rect.left = c.rect.right + 1
         self.reverse_horizontal_movement()
-      break # takes in account only the first collision
   
   def reverse_vertical_movement(self):
     self.y_direction *= -1
