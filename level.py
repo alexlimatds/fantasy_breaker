@@ -118,7 +118,9 @@ def run(level, game, enemies, blocks, power_ups=None):
         player.update()
     elif game_state == IN_GAME:
       defeated = False
+      #all_sprites.update(target_sprites=targets)
       all_sprites.update(target_sprites=targets)
+      ball.move(targets)
       arena.check_bump(ball)
       # collision between ball and player
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)

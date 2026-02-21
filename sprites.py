@@ -234,15 +234,23 @@ class Ball(pygame.sprite.Sprite):
     self.y_speed = self.SPEED * math.sin(math.pi / 2)
 
   def update(self, *args, **kwargs):
-    target_sprites = kwargs['target_sprites']
+    # animation
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
+  
+  def move(self, target_sprites):
     # vertical movement
     self.rect.top += self.y_speed * self.y_direction
     collided = pygame.sprite.spritecollide(self, target_sprites, False)
     for c in collided:
       c.collide(self)
-      if self.y_direction > 0: # Moving down
+      if self.y_direction > 0: # Ball os moving down
         self.rect.bottom = c.rect.top - 1
-      else: # Moving up
+      else: # Ball is moving up
         self.rect.top = c.rect.bottom + 1
       self.reverse_vertical_movement()
       break # takes in account only the first collision
@@ -252,21 +260,13 @@ class Ball(pygame.sprite.Sprite):
     collided = pygame.sprite.spritecollide(self, target_sprites, False)
     for c in collided:
       c.collide(self)
-      if self.x_speed > 0: # Moving right
+      if self.x_speed > 0: # Ball is moving right
         self.rect.right = c.rect.left - 1
         self.reverse_horizontal_movement()
-      elif self.x_speed < 0: # Moving left
+      elif self.x_speed < 0: # Ball is moving left
         self.rect.left = c.rect.right + 1
         self.reverse_horizontal_movement()
       break # takes in account only the first collision
-    
-    # animation
-    TICK_CHANGE = 12
-    if self.tick == TICK_CHANGE:
-      self.tick = 0
-      self.image = self.frames[self.frame_count]
-      self.frame_count = (self.frame_count + 1) % len(self.frames)
-    self.tick += 1
   
   def reverse_vertical_movement(self):
     self.y_direction *= -1
