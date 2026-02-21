@@ -117,8 +117,9 @@ def run(level, game, enemies, blocks, power_ups=None):
         player.to_initial_stance()
         player.update()
     elif game_state == IN_GAME:
-      arena.check_bump(ball)
       defeated = False
+      all_sprites.update(target_sprites=targets)
+      arena.check_bump(ball)
       # collision between ball and player
       collided = pygame.sprite.spritecollide(ball, [player], False, pygame.sprite.collide_mask)
       bellow_screen = arena.below_screen(ball)
@@ -156,7 +157,7 @@ def run(level, game, enemies, blocks, power_ups=None):
         player.lives -= 1
         game_state = LOST_LIFE
         lost_time = pygame.time.get_ticks()
-      all_sprites.update(target_sprites=targets)
+      #all_sprites.update(target_sprites=targets)
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
