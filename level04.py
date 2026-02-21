@@ -1,4 +1,5 @@
-import util, pygame, level, sprites
+import util, pygame, sprites
+import level as lv
 import constants as co
 
 def run(game):
@@ -88,4 +89,5 @@ def run(game):
   enemy = None
   block = None
   ## RUN LEVEL ##
-  level.run(4, game, enemies, blocks, power_ups=power_ups)
+  level = lv.Level(4, game, enemies, blocks, power_ups)
+  level.run()

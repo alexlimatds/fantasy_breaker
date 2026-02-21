@@ -1,4 +1,5 @@
-import util, pygame, level, sprites
+import util, pygame, sprites
+import level as lv
 
 def run(game):
   '''
@@ -26,4 +27,5 @@ def run(game):
     b.rect.left = i * 62
     blocks.add(b)
   ## RUN LEVEL ##
-  level.run(2, game, enemies, blocks)
+  level = lv.Level(2, game, enemies, blocks, None)
+  level.run()
