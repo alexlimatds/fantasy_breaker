@@ -5,7 +5,7 @@ class BrickBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
     self.frames = util.load_grid_images('assets/brick_block_sheet.png', 110, 30, 2, 1)
-    self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
+    self.frames = [pygame.transform.scale(f, (co.BLOCK_WIDTH, co.BLOCK_HEIGHT)) for f in self.frames]
     self.image = self.frames[0]
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
@@ -23,7 +23,7 @@ class ConcreteBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
     pygame.sprite.Sprite.__init__(self)
     self.frames = util.load_grid_images('assets/concrete_block_sheet.png', 110, 30, 3, 1)
-    self.frames = [pygame.transform.scale(f, (55, 30)) for f in self.frames]
+    self.frames = [pygame.transform.scale(f, (co.BLOCK_WIDTH, co.BLOCK_HEIGHT)) for f in self.frames]
     self.image = self.frames[0]
     self.rect = self.image.get_rect()
     self.mask = pygame.mask.from_surface(self.image)
