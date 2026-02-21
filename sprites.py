@@ -242,13 +242,21 @@ class Ball(pygame.sprite.Sprite):
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     self.tick += 1
   
-  def move(self, target_sprites):
+  def move(self, reboundig_sprites):
+    '''
+    This method moves the ball and adjusts its movement if it 
+    collides with a sprite that generates a rebound, such as 
+    blocks and enemies.
+
+    :param reboundig_sprites: A sprite.Group containing the sprites able 
+    to rebound the ball.
+    '''
     # vertical movement
     self.rect.top += self.y_speed * self.y_direction
-    collided = pygame.sprite.spritecollide(self, target_sprites, False)
+    collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
     for c in collided:
       c.collide(self)
-      if self.y_direction > 0: # Ball os moving down
+      if self.y_direction > 0: # Ball is moving down
         self.rect.bottom = c.rect.top - 1
       else: # Ball is moving up
         self.rect.top = c.rect.bottom + 1
@@ -257,7 +265,7 @@ class Ball(pygame.sprite.Sprite):
     
     # horizontal movement
     self.rect.left += self.x_speed
-    collided = pygame.sprite.spritecollide(self, target_sprites, False)
+    collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
     for c in collided:
       c.collide(self)
       if self.x_speed > 0: # Ball is moving right
