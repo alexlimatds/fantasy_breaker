@@ -75,14 +75,13 @@ class AmberGoblin(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
   def __init__(self, magical_bar, lives=0):
     pygame.sprite.Sprite.__init__(self)
-    FRAME_DIM = 115
     # idle frames
-    self.idle_right_frames = util.load_grid_images('assets/player_idle_sheet.png', FRAME_DIM, FRAME_DIM, 6, 1)
+    self.idle_right_frames = util.load_grid_images('assets/player_idle_sheet.png', co.PLAYER_FRAME_DIM, co.PLAYER_FRAME_DIM, 6, 1)
     self.idle_right_masks = [pygame.mask.from_surface(img) for img in self.idle_right_frames]
     self.idle_left_frames = [pygame.transform.flip(img, True, False) for img in self.idle_right_frames]
     self.idle_left_masks = [pygame.mask.from_surface(img) for img in self.idle_left_frames]
     # running frames
-    self.running_right_frames = util.load_grid_images('assets/player_run_right_sheet.png', FRAME_DIM, FRAME_DIM, 8, 1)
+    self.running_right_frames = util.load_grid_images('assets/player_run_right_sheet.png', co.PLAYER_FRAME_DIM, co.PLAYER_FRAME_DIM, 8, 1)
     self.running_right_masks = [pygame.mask.from_surface(img) for img in self.running_right_frames]
     self.running_left_frames = [pygame.transform.flip(img, True, False) for img in self.running_right_frames]
     self.running_left_masks = [pygame.mask.from_surface(img) for img in self.running_left_frames]
@@ -320,6 +319,7 @@ class MagicalBar(pygame.sprite.Sprite):
     FRAME_WIDTH = 90
     FRAME_HEIGHT = 7
     self.frames = util.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
+    self.frames = [pygame.transform.scale(f, (co.PLAYER_FRAME_DIM, FRAME_HEIGHT)) for f in self.frames]
     self.masks = [pygame.mask.from_surface(img) for img in self.frames]
     self.image = self.frames[0]
     self.mask = self.masks[0]
