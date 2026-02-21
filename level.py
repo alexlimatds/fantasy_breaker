@@ -121,7 +121,6 @@ def run(level, game, enemies, blocks, power_ups=None):
         player.to_initial_stance()
         player.update()
     elif game_state == IN_GAME:
-      defeated = False
       all_sprites.update()
       ball.move(reboundig_sprites) # manages collision with blocks and enemies
       arena.check_bump(ball)       # manages collision with screen boundaries
@@ -149,8 +148,7 @@ def run(level, game, enemies, blocks, power_ups=None):
             c.collide(all_sprites)
         # checking victory
         if len(enemies) == 0:
-          game_state = VICTORY
-      
+          game_state = VICTORY      
 
     ### RENDERING ###
     game.screen.fill((0, 0, 0))
