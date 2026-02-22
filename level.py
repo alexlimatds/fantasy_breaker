@@ -33,8 +33,8 @@ class Level:
     run_game_loop = True
 
     ## TEXT ##
-    font_msgs = pygame.font.Font(None, 40)
-    font_stats = pygame.font.Font(None, 20)
+    font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
+    font_stats = pygame.font.Font('assets/romulus.ttf', 20)
     txt_paused = font_msgs.render("P A U S E", True, 'red')
     txt_game_over = font_msgs.render("GAME OVER", True, 'red')
     txt_lost = font_msgs.render("DEFEAT", True, 'red')

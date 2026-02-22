@@ -8,10 +8,12 @@ import level01, level02, level03, level04
 # https://opengameart.org/content/roguelike-tiles-large-collection
 
 # Icons by Lorc: https://lorcblog.blogspot.com/
-# https://opengameart.org/content/dungeon-crawl-32x32-tiles
-# https://luizmelo.itch.io/monsters-creatures-fantasy
 # https://beast-pixels.itch.io/crafting-materials
-# https://petraheim.itch.io/breakout-pixelart
+
+# https://luizmelo.itch.io/monsters-creatures-fantasy
+# Alagard font by Hewett Tsoi (https://www.dafont.com/alagard.font)
+# Romulus font by Hewett Tsoi (https://www.dafont.com/romulus.font)
+
 
 class Game:
   def __init__(self):
