@@ -74,8 +74,8 @@ def run(game):
   blocks.add(block)
 
   power_ups = pygame.sprite.Group()
-  power_ups.add(sprites.PurpleCrystal((10, y + 20)))
-  power_ups.add(sprites.GreenCrystal((co.SCREEN_WIDHT - 40, y + 20)))
+  power_ups.add(sprites.PurpleCrystal(topleft=(10, y + 20)))
+  power_ups.add(sprites.GreenCrystal(topleft=(co.SCREEN_WIDHT - 40, y + 20)))
 
   y += block_h + 10
   block = sprites.BrickBlock(0, y)

@@ -458,7 +458,7 @@ class AmberBossGoblin(pygame.sprite.Sprite):
         self.kill()
     
 class PurpleCrystal(pygame.sprite.Sprite):
-  def __init__(self, topleft):
+  def __init__(self, topleft=None, midtop=None):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 30
     self.frames = util.load_grid_images('assets/purple_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
@@ -467,6 +467,8 @@ class PurpleCrystal(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     if topleft:
       self.rect.topleft = topleft
+    if midtop:
+      self.rect.midtop = midtop
     # animation
     self.tick = 1
     self.frame_count = 0
@@ -488,7 +490,7 @@ class PurpleCrystal(pygame.sprite.Sprite):
         return
       
 class GreenCrystal(pygame.sprite.Sprite):
-  def __init__(self, topleft):
+  def __init__(self, topleft=None, midtop=None):
     pygame.sprite.Sprite.__init__(self)
     FRAME_DIM = 30
     self.frames = util.load_grid_images('assets/green_crystal_sheet.png', FRAME_DIM, FRAME_DIM, 7, 1)
@@ -497,6 +499,8 @@ class GreenCrystal(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     if topleft:
       self.rect.topleft = topleft
+    if midtop:
+      self.rect.midtop = midtop
     # animation
     self.tick = 1
     self.frame_count = 0
