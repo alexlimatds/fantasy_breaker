@@ -1,37 +1,26 @@
-import game, pygame, level
+import pygame
 import constants as co
-import sprites
+import game as gm
+import level as lv
+import sprites, util
 
-def run(player):
-  '''
-  Defines the sprites of Level 01 and execute it
-  
-  :param player: An instance of sprites.Player.
-  '''
-  ## SPRITES ##
-  e = sprites.AmberBossGoblin(co.SCREEN_WIDHT / 2 - 40, 15)
-  enemies = pygame.sprite.Group(e)
-  x = 500
-  blocks = pygame.sprite.Group()
-  for i in range(1, 7):
-    b = sprites.ConcreteBlock(x + i * 55, 300)
-    b.hit_points = 1000
-    blocks.add(b)
-  
-  power_ups = pygame.sprite.Group(
-    sprites.GreenCrystal(
-      (co.SCREEN_WIDHT/2 + 60, 200)
-      )
-    )
-  ## RUN LEVEL ##
-  level.run('Test', player, enemies, blocks, power_ups=power_ups)
+game = gm.Game()
+game.player = util.create_player(3)
 
-def main():
-  # Run this function to test the level
-  angle_pointer = sprites.AnglePointer()
-  magical_bar = sprites.MagicalBar(angle_pointer)
-  player = sprites.Player(magical_bar, 3)
-  run(player)
+matrix = [
+  ['CB', '', 'AB', 'ABG', '', '', '', '', '', '', '', '', '', '', '', 'GC'], 
+  ['PC', '', '', '', '', 'ABG', '', '', '', '', '', '', '', '', '', 'GC'], 
+  ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+  ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+  ['AB', 'AB', '', 'AB', '', 'AB', '', '', '', '', '', '', '', '', '', ''], 
+  ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+  ['CB', 'CB', 'CB', 'CB', 'CB', 'CB', 'CB', 'CB', 'CB', 'BB', 'BB', 'BB', '', '', '', ''], 
+  ['CB', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+  ['CB', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 
+  ['CB', '', '', '', '', '', '', 'CB', 'CB', 'CB', 'CB', '', '', '', '', ''], 
+  ['', '', '', '', '', '', '', 'CB', 'CB', 'CB', 'CB', 'CB', '', '', '', ''], 
+  ['', '', '', '', '', '', '', 'CB', 'CB', 'CB', 'CB', '', '', '', '', '']
+]
 
-if __name__ == "__main__":
-  main()
+level = lv.build_level('Test', matrix, game)
+level.run()

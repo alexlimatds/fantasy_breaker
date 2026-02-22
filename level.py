@@ -1,5 +1,6 @@
 import pygame, sys
 import sprites, util
+import constants as co
 
 class Level:
   '''
@@ -179,3 +180,35 @@ class Level:
         self.game.draw_msg(txt_continue, vertical_margin=30)
       pygame.display.flip()
       self.game.clock.tick(45) # FPS
+
+def build_level(label, sprites_matrix, game):
+  # max lines -> 12
+  # max columns -> 16
+  enemies = pygame.sprite.Group()
+  blocks = pygame.sprite.Group()
+  power_ups = pygame.sprite.Group()
+
+  max_i = (co.SCREEN_HEIGHT - 2 * co.PLAYER_FRAME_DIM) // co.BLOCK_HEIGHT
+  max_j = co.SCREEN_WIDHT // co.BLOCK_WIDTH
+  for i, line in enumerate(sprites_matrix):
+    if i + 1 > max_i:
+        raise ValueError(f'Matrix with more than {max_i} lines')
+    top_y = i * co.BLOCK_HEIGHT
+    for j, symbol in enumerate(line):
+      if j + 1 > max_j:
+        raise ValueError(f'Matrix with more than {max_j} columns')
+      center_x = j * co.BLOCK_WIDTH + co.BLOCK_WIDTH / 2
+      if symbol == 'CB':
+        blocks.add(sprites.ConcreteBlock(center_x, top_y))
+      elif symbol == 'BB':
+        blocks.add(sprites.BrickBlock(center_x, top_y))
+      elif symbol == 'AB':
+        enemies.add(sprites.AmberGoblin(center_x, top_y))
+      elif symbol == 'ABG':
+        enemies.add(sprites.AmberBossGoblin(center_x, top_y))
+      elif symbol == 'PC':
+        power_ups.add(sprites.PurpleCrystal(midtop=(center_x, top_y)))
+      elif symbol == 'GC':
+        power_ups.add(sprites.GreenCrystal(midtop=(center_x, top_y)))
+  
+  return Level(label, game, enemies, blocks, power_ups)
