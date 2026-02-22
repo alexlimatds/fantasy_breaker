@@ -43,11 +43,14 @@ class Game:
     )
   
   def start(self):
+    levels = [level01.run, level02.run, level03.run, level04.run]
     self.player = util.create_player(3)
-    level01.run(self)
-    level02.run(self)
-    level03.run(self)
-    level04.run(self)
+    for f in levels:
+      f(self)
+      if self.player.lives <= 0:
+        # game over
+        break
+    
 
 def main():
   Game().start()
