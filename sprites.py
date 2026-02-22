@@ -185,7 +185,7 @@ class Ball(pygame.sprite.Sprite):
     # Sice strength might be 1, 2 or 3, the ball might have 
     # three sizes and hence there are three sets of frames and 
     # three masks.
-    original_frames = util.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 2, 1)
+    original_frames = util.load_grid_images('assets/energy_ball_sheet.png', BALL_DIM, BALL_DIM, 5, 1)
     strong_frames = original_frames.copy()
     median_frames = [pygame.transform.scale_by(f, 0.6) for f in original_frames]
     weak_frames = [pygame.transform.scale_by(f, 0.3) for f in original_frames]
