@@ -263,9 +263,8 @@ class Ball(pygame.sprite.Sprite):
       self.mask = self.dic_masks[self.strength]
 
   def reset_movement(self):
-    self.y_direction = -1  # 1 for down, -1 for up
     self.x_speed = self.SPEED * math.cos(math.pi / 2)
-    self.y_speed = self.SPEED * math.sin(math.pi / 2)
+    self.y_speed = self.SPEED * math.sin(math.pi / 2) * -1
 
   def update(self, *args, **kwargs):
     # animation
@@ -286,12 +285,12 @@ class Ball(pygame.sprite.Sprite):
     to rebound the ball.
     '''
     # vertical movement
-    self.rect.top += self.y_speed * self.y_direction
+    self.rect.top += self.y_speed
     collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
     if collided:
       c = collided[0] # takes in account only one collision
       c.collide(self)
-      if self.y_direction > 0: # Ball is moving down
+      if self.y_speed > 0: # Ball is moving down
         self.rect.bottom = c.rect.top - 1
       else: # Ball is moving up
         self.rect.top = c.rect.bottom + 1
@@ -311,7 +310,7 @@ class Ball(pygame.sprite.Sprite):
         self.reverse_horizontal_movement()
   
   def reverse_vertical_movement(self):
-    self.y_direction *= -1
+    self.y_speed *= -1
   
   def reverse_horizontal_movement(self):
     self.x_speed *= -1
@@ -341,8 +340,8 @@ class Arena:
       else:
         ball.rect.left -= 2
     if self.top_boundary in hitted_boundaries:
-      ball.y_direction *= -1
-      ball.rect.top += ball.y_direction * 2
+      ball.reverse_vertical_movement()
+      ball.rect.top = self.top_boundary.rect.bottom + 1
 
   def below_screen(self, sprite):
     return sprite.rect.top > co.SCREEN_HEIGHT
