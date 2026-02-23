@@ -2,6 +2,18 @@ import pygame, sys
 import sprites, util
 import constants as co
 
+def generate_text(font, msg, color, shadow=False):
+  txt = font.render(msg, True, color)
+  if shadow:
+    sh = font.render(msg, True, 'black')
+    offset = sh.get_rect().h * 0.08
+    sh.blit(sh, (offset, offset))
+    sh.blit(txt, (0, 0))
+    return sh
+  else:
+    return txt
+  
+
 class Level:
   '''
   :param label: The number or name of the level.
@@ -35,12 +47,18 @@ class Level:
     ## TEXT ##
     font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
     font_stats = pygame.font.Font('assets/romulus.ttf', 20)
-    txt_paused = font_msgs.render("P A U S E", True, 'red')
-    txt_game_over = font_msgs.render("GAME OVER", True, 'red')
-    txt_lost = font_msgs.render("DEFEAT", True, 'red')
-    txt_level = font_stats.render(f"Level {self.label}", True, 'white')
-    txt_victory = font_msgs.render("VICTORY!", True, '0x99369e')
-    txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
+    #txt_paused = font_msgs.render("P A U S E", True, 'red')
+    txt_paused = generate_text(font_msgs, 'P A U S E', 'red', True)
+    #txt_game_over = font_msgs.render("GAME OVER", True, 'red')
+    txt_game_over = generate_text(font_msgs, 'GAME OVER', 'red', True)
+    #txt_lost = font_msgs.render("DEFEAT", True, 'red')
+    txt_lost = generate_text(font_msgs, 'DEFEAT', 'red', True)
+    #txt_level = font_stats.render(f"Level {self.label}", True, 'white')
+    txt_level = generate_text(font_stats, f"Level {self.label}", 'white')
+    #txt_victory = font_msgs.render("VICTORY!", True, '0x99369e')
+    txt_victory = generate_text(font_msgs, 'VICTORY!', '0x99369e', True)
+    #txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
+    txt_continue = generate_text(font_stats, 'Press ENTER to continue', '0x99369e', True)
 
     ## SPRITES ##
     arena = sprites.Arena()
@@ -107,12 +125,12 @@ class Level:
         player.to_right()
         
       ### GAME LOGIC ###
-      txt_lives = font_stats.render(f"Lives: {player.lives}", True, 'white')
+      txt_lives = generate_text(font_stats, f"Lives: {player.lives}", 'white')
       if game_state == ON_START:
         for a in attacks:
           a.hide()
-        txt_start_1 = font_msgs.render('GET READY!', True, 'red')
-        txt_start_2 = font_msgs.render(f'{start_count}', True, 'red')
+        txt_start_1 = generate_text(font_msgs, 'GET READY!', 'red', True)
+        txt_start_2 = generate_text(font_msgs, f'{start_count}', 'red', True)
         now = pygame.time.get_ticks()
         time_frame = now - start_time
         if time_frame >= 800:
