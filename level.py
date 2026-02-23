@@ -46,7 +46,7 @@ class Level:
 
     ## TEXT ##
     font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
-    font_stats = pygame.font.Font('assets/romulus.ttf', 20)
+    font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)
     #txt_paused = font_msgs.render("P A U S E", True, 'red')
     txt_paused = generate_text(font_msgs, 'P A U S E', 'red', True)
     #txt_game_over = font_msgs.render("GAME OVER", True, 'red')

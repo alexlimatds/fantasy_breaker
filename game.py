@@ -13,7 +13,7 @@ import level01, level02, level03, level04
 # https://luizmelo.itch.io/monsters-creatures-fantasy
 # Alagard font by Hewett Tsoi (https://www.dafont.com/alagard.font)
 # Romulus font by Hewett Tsoi (https://www.dafont.com/romulus.font)
-
+# LG Gothic font by Molnár Benedek (https://www.dafont.com/lggothic.font)
 
 class Game:
   def __init__(self):
