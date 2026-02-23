@@ -61,8 +61,8 @@ class Level:
     enemy, attack = None, None
     # Blocks
     all_sprites.add(self.blocks)
-    reboundig_sprites = self.blocks.copy()
-    reboundig_sprites.add(self.enemies)
+    rebounding_sprites = self.blocks.copy()
+    rebounding_sprites.add(self.enemies)
     # Power Ups
     if self.power_ups:
       all_sprites.add(self.power_ups)
@@ -132,8 +132,8 @@ class Level:
           player.update()
       elif game_state == IN_GAME:
         all_sprites.update()
-        ball.move(reboundig_sprites) # manages collision with blocks and enemies
-        arena.check_bump(ball)       # manages collision with screen boundaries
+        ball.move(rebounding_sprites) # manages collision with blocks and enemies
+        arena.check_bump(ball)        # manages collision with screen boundaries
         # defeat conditions
         defeated = (
           arena.below_screen(ball) or 
@@ -202,6 +202,8 @@ def build_level(label, sprites_matrix, game):
         blocks.add(sprites.ConcreteBlock(center_x, top_y))
       elif symbol == 'BB':
         blocks.add(sprites.BrickBlock(center_x, top_y))
+      elif symbol == 'EB':
+        blocks.add(sprites.EnergyBlock(center_x, top_y))
       elif symbol == 'AB':
         enemies.add(sprites.AmberGoblin(center_x, top_y))
       elif symbol == 'ABG':

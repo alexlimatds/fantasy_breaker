@@ -45,6 +45,35 @@ class ConcreteBlock(pygame.sprite.Sprite):
     else:
       self.image = self.frames[2]
 
+class EnergyBlock(pygame.sprite.Sprite):
+  def __init__(self, center_x, y):
+    pygame.sprite.Sprite.__init__(self)
+    self.frames = util.load_grid_images(
+      'assets/energy_block_sheet.png', 
+      co.BLOCK_WIDTH, co.BLOCK_HEIGHT, 
+      6, 1
+    )
+    self.image = self.frames[0]
+    self.rect = self.image.get_rect()
+    self.mask = pygame.mask.from_surface(self.image)
+    self.rect.midtop = (center_x, y)
+    # animation variables
+    self.tick = 1
+    self.frame_count = 0
+  
+  def collide(self, ball):
+    # This block is indestructible
+    pass
+
+  def update(self, *args, **kwargs):
+    # animation
+    TICK_CHANGE = 12
+    if self.tick == TICK_CHANGE:
+      self.tick = 0
+      self.image = self.frames[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+    self.tick += 1
+
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
     pygame.sprite.Sprite.__init__(self)
