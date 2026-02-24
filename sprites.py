@@ -449,7 +449,7 @@ class AnglePointer(pygame.sprite.Sprite):
   
   def update(self, *args, **kwargs):
     # angle update
-    angle_step = math.pi / 30
+    angle_step = math.pi / 20
     new_angle = None
     if self.increase:
       alpha = min(self.angle + angle_step, 3 * math.pi / 4)
