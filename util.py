@@ -73,3 +73,9 @@ def create_player(lives):
   angle_pointer = sp.AnglePointer()
   magical_bar = sp.MagicalBar(angle_pointer)
   return sp.Player(magical_bar, lives)
+
+def reverse_ball_direction(ball, current_direction):
+  if current_direction == co.HORIZONTAL_DIRECTION:
+    ball.reverse_horizontal_movement()
+  elif current_direction == co.VERTICAL_DIRECTION:
+    ball.reverse_vertical_movement()

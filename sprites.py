@@ -15,12 +15,14 @@ class BrickBlock(pygame.sprite.Sprite):
     self.rect.midtop = (center_x, y)
     self.hit_points = 2
   
-  def collide(self, ball):
+  def collide(self, ball, direction):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
     else:
       self.image = self.frames[1]
+    util.reverse_ball_direction(ball, direction)
+
 
 class ConcreteBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
@@ -36,7 +38,7 @@ class ConcreteBlock(pygame.sprite.Sprite):
     self.rect.midtop = (center_x, y)
     self.hit_points = 4
   
-  def collide(self, ball):
+  def collide(self, ball, direction):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
@@ -44,6 +46,7 @@ class ConcreteBlock(pygame.sprite.Sprite):
       self.image = self.frames[1]
     else:
       self.image = self.frames[2]
+    util.reverse_ball_direction(ball, direction)
 
 class EnergyBlock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
@@ -61,9 +64,9 @@ class EnergyBlock(pygame.sprite.Sprite):
     self.tick = 1
     self.frame_count = 0
   
-  def collide(self, ball):
+  def collide(self, ball, direction):
     # This block is indestructible
-    pass
+    util.reverse_ball_direction(ball, direction)
 
   def update(self, *args, **kwargs):
     # animation
@@ -73,6 +76,51 @@ class EnergyBlock(pygame.sprite.Sprite):
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     self.tick += 1
+
+class BloodBall(pygame.sprite.Sprite):
+  def __init__(self, center_x, y):
+    pygame.sprite.Sprite.__init__(self)
+    self.idle_frames = util.load_grid_images(
+      'assets/blood_ball_sheet.png', 
+      co.BLOOD_BALL_FRAME_DIM, co.BLOOD_BALL_FRAME_DIM, 
+      3, 1
+    )
+    self.idle_mask = pygame.mask.from_surface(self.idle_frames[0])
+    self.hit_frame = pygame.transform.scale(
+      self.idle_frames[2], 
+      (co.BLOOD_BALL_FRAME_DIM + 10, co.BLOOD_BALL_FRAME_DIM + 10)
+    )
+    self.hit_mask = pygame.mask.from_surface(self.hit_frame)
+    self.frames = self.idle_frames
+    self.image = self.frames[0]
+    self.rect = self.image.get_rect()
+    self.mask = self.idle_mask
+    self.rect.midtop = (center_x, y)
+    # animation variables
+    self.tick = 1
+    self.frame_count = 0
+    self.IDLE = 1
+    self.HIT = 2
+    self.state = self.IDLE
+  
+  def collide(self, ball, direction):
+    # This sprite is indestructible
+    util.reverse_ball_direction(ball, direction)
+
+  def update(self, *args, **kwargs):
+    # animation
+    if self.state == self.IDLE:
+      if self.tick == 12:
+        self.tick = 1
+        self.image = self.frames[self.frame_count]
+        self.frame_count = (self.frame_count + 1) % len(self.frames)
+      self.tick += 1
+    else: # hit
+      if self.tick == 5:
+        self.tick = 1
+        self.frame_count = 0
+        self.image = self.frames[self.frame_count]
+        self.mask = self.idle_mask
 
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
@@ -101,10 +149,11 @@ class AmberGoblin(pygame.sprite.Sprite):
       self.attack.throw()
     self.tick += 1
   
-  def collide(self, ball):
+  def collide(self, ball, direction):
     self.hit_points -= ball.strength
     if self.hit_points <= 0:
       self.kill()
+    util.reverse_ball_direction(ball, direction)
 
 class Player(pygame.sprite.Sprite):
   def __init__(self, magical_bar, lives=0):
@@ -289,25 +338,23 @@ class Ball(pygame.sprite.Sprite):
     collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
     if collided:
       c = collided[0] # takes in account only one collision
-      c.collide(self)
+      # TODO get the nearest sprite instead the first one
       if self.y_speed > 0: # Ball is moving down
         self.rect.bottom = c.rect.top - 1
       else: # Ball is moving up
         self.rect.top = c.rect.bottom + 1
-      self.reverse_vertical_movement()
+      c.collide(self, co.VERTICAL_DIRECTION)
     
     # horizontal movement
     self.rect.left += self.x_speed
     collided = pygame.sprite.spritecollide(self, reboundig_sprites, False)
     if collided:
       c = collided[0] # takes in account only one collision
-      c.collide(self)
       if self.x_speed > 0: # Ball is moving right
         self.rect.right = c.rect.left - 1
-        self.reverse_horizontal_movement()
       elif self.x_speed < 0: # Ball is moving left
         self.rect.left = c.rect.right + 1
-        self.reverse_horizontal_movement()
+      c.collide(self, co.HORIZONTAL_DIRECTION)
   
   def reverse_vertical_movement(self):
     self.y_speed *= -1
@@ -482,7 +529,7 @@ class AmberBossGoblin(pygame.sprite.Sprite):
     self.tick += 1
     self.tick_hit -= 1
   
-  def collide(self, ball):
+  def collide(self, ball, direction):
     # this boss is imune to the weak boss
     if ball.strength > 1:
       self.image = self.red_idle_frames[self.frame_count]
@@ -490,6 +537,7 @@ class AmberBossGoblin(pygame.sprite.Sprite):
       self.hit_points -= ball.strength
       if self.hit_points <= 0:
         self.kill()
+    util.reverse_ball_direction(ball, direction)
     
 class PurpleCrystal(pygame.sprite.Sprite):
   def __init__(self, topleft=None, midtop=None):
