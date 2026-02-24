@@ -69,7 +69,7 @@ class EnergyBlock(pygame.sprite.Sprite):
     # animation
     TICK_CHANGE = 12
     if self.tick == TICK_CHANGE:
-      self.tick = 0
+      self.tick = 1
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     self.tick += 1
