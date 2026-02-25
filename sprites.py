@@ -294,6 +294,7 @@ class Ball(pygame.sprite.Sprite):
     self.SPEED = 5 * math.sqrt(2)
     self.reset_movement()
     self.strength = 1
+    self.acceleration_tick = None
     # animation variables
     self.tick = 1
     self.frame_count = 0
@@ -318,10 +319,16 @@ class Ball(pygame.sprite.Sprite):
   def update(self, *args, **kwargs):
     # animation
     TICK_CHANGE = 12
-    if self.tick == TICK_CHANGE:
-      self.tick = 0
+    if self.tick % TICK_CHANGE == 0:
+      #self.tick = 1
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
+    # acceleration control
+    if self.acceleration_tick and self.tick - self.acceleration_tick >= 6:
+      self.x_speed /= 2
+      self.y_speed /= 2
+      self.acceleration_tick = None
+
     self.tick += 1
   
   def move(self, reboundig_sprites):
@@ -361,6 +368,11 @@ class Ball(pygame.sprite.Sprite):
   
   def reverse_horizontal_movement(self):
     self.x_speed *= -1
+
+  def accelerate(self):
+    self.x_speed *= 2
+    self.y_speed *= 2
+    self.acceleration_tick = self.tick
       
 class Boundary(pygame.sprite.Sprite):
   def __init__(self, x, y, width, height):
