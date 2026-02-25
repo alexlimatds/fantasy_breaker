@@ -403,8 +403,9 @@ class Ball(pygame.sprite.Sprite):
       self.reverse_horizontal_movement()
 
   def accelerate(self):
-    self.x_speed *= self.ACCELERATION_RATE
-    self.y_speed *= self.ACCELERATION_RATE
+    if not self.acceleration_tick:
+      self.x_speed *= self.ACCELERATION_RATE
+      self.y_speed *= self.ACCELERATION_RATE
     self.acceleration_tick = self.tick
   
   def to_standard_speed(self):
