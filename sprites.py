@@ -390,6 +390,18 @@ class Ball(pygame.sprite.Sprite):
   def reverse_horizontal_movement(self):
     self.x_speed *= -1
 
+  def to_down(self):
+    if self.y_speed > 0:
+      self.reverse_vertical_movement()
+  
+  def to_right(self):
+    if self.x_speed < 0:
+      self.reverse_horizontal_movement()
+  
+  def to_left(self):
+    if self.x_speed > 0:
+      self.reverse_horizontal_movement()
+
   def accelerate(self):
     self.x_speed *= self.ACCELERATION_RATE
     self.y_speed *= self.ACCELERATION_RATE
@@ -411,22 +423,36 @@ class Boundary(pygame.sprite.Sprite):
 class Arena:
   # This class is used to check if an sprite reaches the boundaries of the screen
   def __init__(self):
-    self.left_boundary = Boundary(-1, 0, 1, co.SCREEN_HEIGHT)
-    self.right_boundary = Boundary(co.SCREEN_WIDHT + 1, 0, 1, co.SCREEN_HEIGHT)
-    self.top_boundary = Boundary(0, -1, co.SCREEN_WIDHT, 1)
+    thickness = 300
+    self.left_boundary = Boundary(-thickness, 0, thickness, co.SCREEN_HEIGHT)
+    self.right_boundary = Boundary(co.SCREEN_WIDHT + 1, 0, thickness, co.SCREEN_HEIGHT)
+    self.top_boundary = Boundary(0, -thickness, co.SCREEN_WIDHT, thickness)
     self.boundaries = [self.left_boundary, self.right_boundary, self.top_boundary]
   
   def check_bump(self, ball):
+    """
+    Checks if the ball hitted any of the boundareis. In an positive 
+    case, this function adjusts the position of the ball.
+    """
     hitted_boundaries = pygame.sprite.spritecollide(ball, self.boundaries, False, pygame.sprite.collide_mask)
     if self.left_boundary in hitted_boundaries or self.right_boundary in hitted_boundaries:
-      ball.x_speed *= -1
+      ball.reverse_horizontal_movement()
       if ball.x_speed > 0:
-        ball.rect.left += 2
+        ball.rect.left = 1
       else:
-        ball.rect.left -= 2
+        ball.rect.right = co.SCREEN_WIDHT - 1
     if self.top_boundary in hitted_boundaries:
       ball.reverse_vertical_movement()
       ball.rect.top = self.top_boundary.rect.bottom + 1
+    # Checking of the ball scaped through one of the upper corner
+    if ball.rect.x <= 0 and ball.rect.y <= 0: # left corner
+      ball.rect.topleft = (1, 1)
+      ball.to_down()
+      ball.to_right()
+    elif ball.rect.x >= co.SCREEN_WIDHT and ball.rect.y <= 0: # right corner
+      ball.rect.topright = (co.SCREEN_WIDHT - 1, 1)
+      ball.to_down()
+      ball.to_left()
 
   def below_screen(self, sprite):
     return sprite.rect.top > co.SCREEN_HEIGHT
