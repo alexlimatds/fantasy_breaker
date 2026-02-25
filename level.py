@@ -223,7 +223,7 @@ def build_level(label, sprites_matrix, game):
       elif symbol == 'EB':
         blocks.add(sprites.EnergyBlock(center_x, top_y))
       elif symbol == 'BLB':
-        blocks.add(sprites.BloodBall(center_x, top_y))
+        blocks.add(sprites.BloodBLock(center_x, top_y))
       elif symbol == 'AB':
         enemies.add(sprites.AmberGoblin(center_x, top_y))
       elif symbol == 'ABG':

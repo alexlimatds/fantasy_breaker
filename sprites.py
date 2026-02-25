@@ -77,50 +77,73 @@ class EnergyBlock(pygame.sprite.Sprite):
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     self.tick += 1
 
-class BloodBall(pygame.sprite.Sprite):
+class BloodBLock(pygame.sprite.Sprite):
   def __init__(self, center_x, y):
+    # loading frames
     pygame.sprite.Sprite.__init__(self)
     self.idle_frames = util.load_grid_images(
-      'assets/blood_ball_sheet.png', 
-      co.BLOOD_BALL_FRAME_DIM, co.BLOOD_BALL_FRAME_DIM, 
-      3, 1
+      'assets/blood_block_idle_sheet.png', 
+      co.BLOCK_WIDTH, co.BLOCK_HEIGHT, 
+      6, 1
     )
-    self.idle_mask = pygame.mask.from_surface(self.idle_frames[0])
-    self.hit_frame = pygame.transform.scale(
-      self.idle_frames[2], 
-      (co.BLOOD_BALL_FRAME_DIM + 10, co.BLOOD_BALL_FRAME_DIM + 10)
+    self.hit_frames = util.load_grid_images(
+      'assets/blood_block_hit_sheet.png', 
+      co.BLOCK_WIDTH, co.BLOCK_HEIGHT, 
+      4, 1
     )
-    self.hit_mask = pygame.mask.from_surface(self.hit_frame)
+    # initial state
     self.frames = self.idle_frames
     self.image = self.frames[0]
     self.rect = self.image.get_rect()
-    self.mask = self.idle_mask
+    self.mask = pygame.mask.from_surface(self.image)
     self.rect.midtop = (center_x, y)
     # animation variables
     self.tick = 1
-    self.frame_count = 0
+    self.frame_count = 1
     self.IDLE = 1
     self.HIT = 2
-    self.state = self.IDLE
+    self.to_idle_state()
   
   def collide(self, ball, direction):
     # This sprite is indestructible
     util.reverse_ball_direction(ball, direction)
+    # TODO accelerate
+    self.to_hit_state()
+  
+  def to_hit_state(self):
+    self.state = self.HIT
+    self.frames = self.hit_frames
+    self.frame_count = 0
+    self.update_image()
+    self.tick = 1
+  
+  def to_idle_state(self):
+    self.state = self.IDLE
+    self.frames = self.idle_frames
+    self.frame_count = 0
+    self.update_image()
+    self.tick = 1
 
+  def update_image(self):
+    self.image = self.frames[self.frame_count]
+
+  def update_frame(self):
+    self.update_image()
+    
   def update(self, *args, **kwargs):
     # animation
     if self.state == self.IDLE:
-      if self.tick == 12:
-        self.tick = 1
-        self.image = self.frames[self.frame_count]
+      if self.tick % 12 == 0:
+        self.update_image()
         self.frame_count = (self.frame_count + 1) % len(self.frames)
-      self.tick += 1
     else: # hit
-      if self.tick == 5:
-        self.tick = 1
-        self.frame_count = 0
-        self.image = self.frames[self.frame_count]
-        self.mask = self.idle_mask
+      TICK_CHANGE = 10
+      if self.tick % TICK_CHANGE == 0 and self.frame_count == 4:
+        self.to_idle_state()
+      elif self.tick % TICK_CHANGE == 0:
+        self.update_image()
+        self.frame_count += 1
+    self.tick += 1
 
 class AmberGoblin(pygame.sprite.Sprite):
   def __init__(self, centerx, top):
