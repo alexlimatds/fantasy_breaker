@@ -107,7 +107,7 @@ class BloodBLock(pygame.sprite.Sprite):
   def collide(self, ball, direction):
     # This sprite is indestructible
     util.reverse_ball_direction(ball, direction)
-    # TODO accelerate
+    ball.accelerate()
     self.to_hit_state()
   
   def to_hit_state(self):
