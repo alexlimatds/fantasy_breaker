@@ -319,7 +319,7 @@ class Ball(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.reset_movement()
     self.strength = 1
-    self.acceleration_tick = None
+    self.change_speed_time = None
     # animation variables
     self.tick = 1
     self.frame_count = 1
@@ -404,26 +404,22 @@ class Ball(pygame.sprite.Sprite):
     if self.x_speed > 0:
       self.reverse_horizontal_movement()
 
-  def accelerate(self):
-    if self.speed == self.STANDARD_SPEED:
+  def _change_speed(self, new_speed):
+    if self.speed != new_speed:
       cos = self.x_speed / self.speed
       alpha = math.acos(cos)
       x_sense = self.x_speed / abs(self.x_speed)
       y_sense = self.y_speed / abs(self.y_speed)
-      self.x_speed = self.ACCELERATED_SPEED * abs(math.cos(alpha)) * x_sense
-      self.y_speed = self.ACCELERATED_SPEED * abs(math.sin(alpha)) * y_sense
-      self.speed = self.ACCELERATED_SPEED
-    self.acceleration_tick = self.tick
+      self.x_speed = new_speed * abs(math.cos(alpha)) * x_sense
+      self.y_speed = new_speed * abs(math.sin(alpha)) * y_sense
+      self.speed = new_speed
+    self.change_speed_time = pygame.time.get_ticks()
+
+  def accelerate(self):
+    self._change_speed(self.ACCELERATED_SPEED)
   
   def to_standard_speed(self):
-    if self.speed == self.ACCELERATED_SPEED:
-      cos = self.x_speed / self.speed
-      alpha = math.acos(cos)
-      x_sense = self.x_speed / abs(self.x_speed)
-      y_sense = self.y_speed / abs(self.y_speed)
-      self.x_speed = self.STANDARD_SPEED * abs(math.cos(alpha)) * x_sense
-      self.y_speed = self.STANDARD_SPEED * abs(math.sin(alpha)) * y_sense
-      self.speed = self.STANDARD_SPEED
+    self._change_speed(self.STANDARD_SPEED)
 
   def set_angle(self, new_angle):
     '''
