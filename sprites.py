@@ -309,9 +309,9 @@ class Ball(pygame.sprite.Sprite):
       2: median_mask, 
       3: strong_mask
     }
-    # contants
-    self.STANDARD_SPEED = 5 * math.sqrt(2)
-    self.ACCELERATION_RATE = 1.8
+    # constants
+    self.STANDARD_SPEED = 7
+    self.ACCELERATED_SPEED = 1.8 * self.STANDARD_SPEED
     # initiating state
     self.frames = weak_frames
     self.image = self.frames[0]
@@ -338,8 +338,10 @@ class Ball(pygame.sprite.Sprite):
       self.mask = self.dic_masks[self.strength]
 
   def reset_movement(self):
-    self.x_speed = self.STANDARD_SPEED * math.cos(math.pi / 2)
-    self.y_speed = self.STANDARD_SPEED * math.sin(math.pi / 2) * -1
+    self.speed = self.STANDARD_SPEED
+    self.angle = math.pi / 2
+    self.x_speed = self.speed * math.cos(self.angle)
+    self.y_speed = self.speed * math.sin(self.angle) * -1
 
   def update(self, *args, **kwargs):
     # animation
@@ -348,8 +350,8 @@ class Ball(pygame.sprite.Sprite):
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     # acceleration control
-    if self.acceleration_tick and self.tick - self.acceleration_tick >= 20:
-      self.to_standard_speed()
+    #if self.acceleration_tick and self.tick - self.acceleration_tick >= 20:
+    #  self.to_standard_speed()
     self.tick += 1
   
   def move(self, reboundig_sprites):
@@ -403,15 +405,36 @@ class Ball(pygame.sprite.Sprite):
       self.reverse_horizontal_movement()
 
   def accelerate(self):
-    if not self.acceleration_tick:
-      self.x_speed *= self.ACCELERATION_RATE
-      self.y_speed *= self.ACCELERATION_RATE
+    if self.speed == self.STANDARD_SPEED:
+      cos = self.x_speed / self.speed
+      alpha = math.acos(cos)
+      x_sense = self.x_speed / abs(self.x_speed)
+      y_sense = self.y_speed / abs(self.y_speed)
+      self.x_speed = self.ACCELERATED_SPEED * abs(math.cos(alpha)) * x_sense
+      self.y_speed = self.ACCELERATED_SPEED * abs(math.sin(alpha)) * y_sense
+      self.speed = self.ACCELERATED_SPEED
     self.acceleration_tick = self.tick
   
   def to_standard_speed(self):
-    self.x_speed /= self.ACCELERATION_RATE
-    self.y_speed /= self.ACCELERATION_RATE
-    self.acceleration_tick = None
+    if self.speed == self.ACCELERATED_SPEED:
+      cos = self.x_speed / self.speed
+      alpha = math.acos(cos)
+      x_sense = self.x_speed / abs(self.x_speed)
+      y_sense = self.y_speed / abs(self.y_speed)
+      self.x_speed = self.STANDARD_SPEED * abs(math.cos(alpha)) * x_sense
+      self.y_speed = self.STANDARD_SPEED * abs(math.sin(alpha)) * y_sense
+      self.speed = self.STANDARD_SPEED
+
+  def set_angle(self, new_angle):
+    '''
+    Sets the direction angle of the ball. This method was designed 
+    to be called by the MagicalBar at the moment the ball collides 
+    with it.
+    '''
+    self.x_speed = self.STANDARD_SPEED * math.cos(new_angle)
+    self.y_speed = self.STANDARD_SPEED * math.sin(new_angle)
+    self.speed = self.STANDARD_SPEED
+    self.reverse_vertical_movement()
       
 class Boundary(pygame.sprite.Sprite):
   def __init__(self, x, y, width, height):
@@ -483,9 +506,7 @@ class MagicalBar(pygame.sprite.Sprite):
   
   def collide(self, ball):
     ball.rect.bottom = self.rect.top - 1
-    ball.x_speed = ball.STANDARD_SPEED * math.cos(self.angle_pointer.angle)
-    ball.y_speed = ball.STANDARD_SPEED * math.sin(self.angle_pointer.angle)
-    ball.reverse_vertical_movement()
+    ball.set_angle(self.angle_pointer.angle)
 
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
