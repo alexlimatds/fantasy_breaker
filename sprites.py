@@ -349,9 +349,12 @@ class Ball(pygame.sprite.Sprite):
     if self.tick % TICK_CHANGE_FRAME == 0:
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
-    # acceleration control
-    #if self.acceleration_tick and self.tick - self.acceleration_tick >= 20:
-    #  self.to_standard_speed()
+    # speed control
+    if (self.change_speed_time and 
+        self.speed != self.STANDARD_SPEED and 
+        pygame.time.get_ticks() - self.change_speed_time >= 800
+      ):
+      self.to_standard_speed()
     self.tick += 1
   
   def move(self, reboundig_sprites):
