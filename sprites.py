@@ -514,8 +514,9 @@ class AnglePointer(pygame.sprite.Sprite):
     self.image = self.original_image
     self.rect = self.image.get_rect()
     self.to_initial_angle()
-    self.increase = False
-    self.decrease = False
+    self._increase = False
+    self._decrease = False
+    self.angle_change_time = pygame.time.get_ticks()
     self.update()
 
   def to_initial_angle(self):
@@ -532,19 +533,34 @@ class AnglePointer(pygame.sprite.Sprite):
     self.rect = rotated_rect
     self.image = rotated_img
   
+  def increase_angle(self):
+    self._increase = True
+    self.angle_change_time = pygame.time.get_ticks()
+
+  def decrease_angle(self):
+    self._decrease = True
+    self.angle_change_time = pygame.time.get_ticks()
+
+  def stop_angle_change(self):
+    self._decrease = False
+    self._increase = False
+
   def update(self, *args, **kwargs):
-    # angle update
-    angle_step = math.pi / 8
-    new_angle = None
-    if self.increase:
-      alpha = min(self.angle + angle_step, 3 * math.pi / 4)
-      new_angle = alpha
-    elif self.decrease:
-      alpha = max(self.angle - angle_step, math.pi / 4)
-      new_angle = alpha
-    if new_angle:
-      self.angle = new_angle
-      self.update_image()
+    # Angle update. The time restriction allow the player 
+    # to have a more precise control of the pointer.
+    time = pygame.time.get_ticks()
+    if time - self.angle_change_time >= 15:
+      angle_step = math.pi / 8
+      new_angle = None
+      if self._increase:
+        alpha = min(self.angle + angle_step, 3 * math.pi / 4)
+        new_angle = alpha
+      elif self._decrease:
+        alpha = max(self.angle - angle_step, math.pi / 4)
+        new_angle = alpha
+      if new_angle:
+        self.angle = new_angle
+        self.update_image()
  
 class InanimateProjectile(pygame.sprite.Sprite):
   def __init__(self, image_path, speed, centerx, top):

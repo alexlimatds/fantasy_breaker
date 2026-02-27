@@ -96,9 +96,9 @@ class Level:
         elif event.type == pygame.KEYDOWN:
           if game_state == IN_GAME:
             if event.key == pygame.K_UP:
-              angle_pointer.increase = True
+              angle_pointer.increase_angle()
             if event.key == pygame.K_DOWN:
-              angle_pointer.decrease = True
+              angle_pointer.decrease_angle()
         elif event.type == pygame.KEYUP:
           if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
             (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT):
@@ -112,10 +112,8 @@ class Level:
           elif game_state == VICTORY or game_state == GAME_OVER:
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
               run_game_loop = False
-          if event.key == pygame.K_UP:
-            angle_pointer.increase = False
-          if event.key == pygame.K_DOWN:
-            angle_pointer.decrease = False
+          if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+            angle_pointer.stop_angle_change()
         player.update()
 
       keys = pygame.key.get_pressed()
