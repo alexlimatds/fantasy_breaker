@@ -718,7 +718,7 @@ class GreenCrystal(pygame.sprite.Sprite):
 class Hourglass(pygame.sprite.Sprite):
   def __init__(self, topleft=None, midtop=None):
     pygame.sprite.Sprite.__init__(self)
-    self.image = pygame.image.load('assets/hourglass.png').convert_alpha()
+    self.image = pygame.image.load(co.HOURGLASS_IMG).convert_alpha()
     self.mask = pygame.mask.from_surface(self.image)
     self.rect = self.image.get_rect()
     if topleft:

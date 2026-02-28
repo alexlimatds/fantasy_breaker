@@ -41,6 +41,11 @@ class Level:
       co.GAME_AREA_HEIGHT
     ))
     self.area_game.fill((0, 0, 0))
+    ## IMAGES ##
+    self.hourglass_img = pygame.image.load(co.HOURGLASS_IMG).convert_alpha()
+    ## FONTS ##
+    self.font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
+    self.font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)
   
   def draw_msg(self, surface_txt, vertical_margin = 0):
     self.area_game.blit(
@@ -51,17 +56,22 @@ class Level:
       )
     )
 
-  def draw_txt_level(self, surface_txt):
-    self.area_info.blit(surface_txt, (5, 5))
-
-  def draw_txt_lives(self, surface_txt):
+  def draw_info_area(self):
+    # Level label
+    self.area_info.blit(self.txt_level, (5, 5))
+    # Player's lives
     self.area_info.blit(
-      surface_txt, 
+      self.txt_lives, 
       (
-        co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
+        co.SCREEN_WIDHT - self.txt_lives.get_rect().w - 5, 
         5
       )
     )
+    # Ball decelerator power-up
+    icon = pygame.transform.scale_by(self.hourglass_img, 0.8)
+    self.area_info.blit(icon, (130, 3))
+    txt = generate_text(self.font_stats, f'Z: {self.game.player.ball_decelerator}', 'white')
+    self.area_info.blit(txt, (130 + 35, 5))
 
   def run(self):
     '''
@@ -79,20 +89,12 @@ class Level:
     run_game_loop = True
 
     ## TEXT ##
-    font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
-    font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)
-    #txt_paused = font_msgs.render("P A U S E", True, 'red')
-    txt_paused = generate_text(font_msgs, 'P A U S E', 'red', True)
-    #txt_game_over = font_msgs.render("GAME OVER", True, 'red')
-    txt_game_over = generate_text(font_msgs, 'GAME OVER', 'red', True)
-    #txt_lost = font_msgs.render("DEFEAT", True, 'red')
-    txt_lost = generate_text(font_msgs, 'DEFEAT', 'red', True)
-    #txt_level = font_stats.render(f"Level {self.label}", True, 'white')
-    txt_level = generate_text(font_stats, f"{self.label}", 'white')
-    #txt_victory = font_msgs.render("VICTORY!", True, '0x99369e')
-    txt_victory = generate_text(font_msgs, 'VICTORY!', '0x99369e', True)
-    #txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')
-    txt_continue = generate_text(font_stats, 'Press ENTER to continue', '0x99369e', True)
+    txt_paused = generate_text(self.font_msgs, 'P A U S E', 'red', True)
+    txt_game_over = generate_text(self.font_msgs, 'GAME OVER', 'red', True)
+    txt_lost = generate_text(self.font_msgs, 'DEFEAT', 'red', True)
+    self.txt_level = generate_text(self.font_stats, f"{self.label}", 'white')
+    txt_victory = generate_text(self.font_msgs, 'VICTORY!', '0x99369e', True)
+    txt_continue = generate_text(self.font_stats, 'Press ENTER to continue', '0x99369e', True)
 
     ## SPRITES ##
     arena = sprites.Arena()
@@ -159,12 +161,12 @@ class Level:
         player.to_right()
         
       ### GAME LOGIC ###
-      txt_lives = generate_text(font_stats, f"Lives: {player.lives}", 'white')
+      self.txt_lives = generate_text(self.font_stats, f"Lives: {player.lives}", 'white')
       if game_state == ON_START:
         for a in attacks:
           a.hide()
-        txt_start_1 = generate_text(font_msgs, 'GET READY!', 'red', True)
-        txt_start_2 = generate_text(font_msgs, f'{start_count}', 'red', True)
+        txt_start_1 = generate_text(self.font_msgs, 'GET READY!', 'red', True)
+        txt_start_2 = generate_text(self.font_msgs, f'{start_count}', 'red', True)
         now = pygame.time.get_ticks()
         time_frame = now - start_time
         if time_frame >= 800:
@@ -215,8 +217,7 @@ class Level:
       ### RENDERING ###
       self.area_info.fill(self.area_info_bg_color)
       self.area_game.fill((0, 0, 0))
-      self.draw_txt_level(txt_level)
-      self.draw_txt_lives(txt_lives)
+      self.draw_info_area()
       all_sprites.draw(self.area_game)
       if game_state == PAUSED:
         self.draw_msg(txt_paused)

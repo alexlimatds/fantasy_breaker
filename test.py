@@ -21,5 +21,5 @@ matrix = [
   ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 ]
 
-level = lv.build_level('Test', matrix, game)
+level = lv.build_level('Test Level', matrix, game)
 level.run()
