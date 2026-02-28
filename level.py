@@ -69,9 +69,11 @@ class Level:
     )
     # Ball decelerator power-up
     icon = pygame.transform.scale_by(self.hourglass_img, 0.8)
-    self.area_info.blit(icon, (130, 3))
+    x = 130
+    self.area_info.blit(icon, (x, 3))
     txt = generate_text(self.font_stats, f'Z: {self.game.player.ball_decelerator}', 'white')
-    self.area_info.blit(txt, (130 + 35, 5))
+    x += 30
+    self.area_info.blit(txt, (x, 5))
 
   def run(self):
     '''
