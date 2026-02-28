@@ -195,6 +195,7 @@ class Player(pygame.sprite.Sprite):
     self.rect = self.idle_right_frames[0].get_rect()
     self.lives = lives
     self.speed = 7
+    self.ball_decelerator = 0
     self.magical_bar = magical_bar
     # animation
     self.IDLE_RIGHT = 0
@@ -246,6 +247,11 @@ class Player(pygame.sprite.Sprite):
       self.move_to(0, y)
     elif self.rect.right > co.SCREEN_WIDHT:
       self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
+  
+  def slow_down_ball(self, ball):
+    if self.ball_decelerator > 0:
+      self.ball_decelerator -= 1
+      ball.slow_down()
 
   def update(self, *args, **kwargs):
     TICK_CHANGE = 6
@@ -311,7 +317,8 @@ class Ball(pygame.sprite.Sprite):
     }
     # constants
     self.STANDARD_SPEED = 7
-    self.ACCELERATED_SPEED = 1.8 * self.STANDARD_SPEED
+    self.HIGH_SPEED = 1.8 * self.STANDARD_SPEED
+    self.LOW_SPEED = 0.6 * self.STANDARD_SPEED
     # initiating state
     self.frames = weak_frames
     self.image = self.frames[0]
@@ -319,7 +326,7 @@ class Ball(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.reset_movement()
     self.strength = 1
-    self.change_speed_time = None
+    self.change_speed_time = pygame.time.get_ticks()
     # animation variables
     self.tick = 1
     self.frame_count = 1
@@ -350,9 +357,10 @@ class Ball(pygame.sprite.Sprite):
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
     # speed control
-    if (self.change_speed_time and 
-        self.speed != self.STANDARD_SPEED and 
-        pygame.time.get_ticks() - self.change_speed_time >= 800
+    time_frame = pygame.time.get_ticks() - self.change_speed_time
+    if (
+        (self.speed == self.HIGH_SPEED and time_frame >= 800) or
+        (self.speed == self.LOW_SPEED and time_frame >= 1500)
       ):
       self.to_standard_speed()
     self.tick += 1
@@ -419,10 +427,13 @@ class Ball(pygame.sprite.Sprite):
     self.change_speed_time = pygame.time.get_ticks()
 
   def accelerate(self):
-    self._change_speed(self.ACCELERATED_SPEED)
+    self._change_speed(self.HIGH_SPEED)
   
   def to_standard_speed(self):
     self._change_speed(self.STANDARD_SPEED)
+
+  def slow_down(self):
+    self._change_speed(self.LOW_SPEED)
 
   def set_angle(self, new_angle):
     '''
@@ -701,5 +712,23 @@ class GreenCrystal(pygame.sprite.Sprite):
     for s in sprites:
       if isinstance (s, Player):
         s.lives += 1
+        self.kill()
+        return
+      
+class Hourglass(pygame.sprite.Sprite):
+  def __init__(self, topleft=None, midtop=None):
+    pygame.sprite.Sprite.__init__(self)
+    self.image = pygame.image.load('assets/hourglass.png').convert_alpha()
+    self.mask = pygame.mask.from_surface(self.image)
+    self.rect = self.image.get_rect()
+    if topleft:
+      self.rect.topleft = topleft
+    if midtop:
+      self.rect.midtop = midtop
+
+  def collide(self, sprites):
+    for s in sprites:
+      if isinstance (s, Player):
+        s.ball_decelerator += 1
         self.kill()
         return
