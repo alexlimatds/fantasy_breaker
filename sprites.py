@@ -458,8 +458,8 @@ class Arena:
   # This class is used to check if an sprite reaches the boundaries of the screen
   def __init__(self):
     thickness = 300
-    self.left_boundary = Boundary(-thickness, 0, thickness, co.SCREEN_HEIGHT)
-    self.right_boundary = Boundary(co.SCREEN_WIDHT + 1, 0, thickness, co.SCREEN_HEIGHT)
+    self.left_boundary = Boundary(-thickness, 0, thickness, co.GAME_AREA_HEIGHT)
+    self.right_boundary = Boundary(co.SCREEN_WIDHT + 1, 0, thickness, co.GAME_AREA_HEIGHT)
     self.top_boundary = Boundary(0, -thickness, co.SCREEN_WIDHT, thickness)
     self.boundaries = [self.left_boundary, self.right_boundary, self.top_boundary]
   
@@ -489,7 +489,7 @@ class Arena:
       ball.to_left()
 
   def below_screen(self, sprite):
-    return sprite.rect.top > co.SCREEN_HEIGHT
+    return sprite.rect.top > co.GAME_AREA_HEIGHT
   
 class MagicalBar(pygame.sprite.Sprite):
   def __init__(self, angle_pointer):
@@ -594,7 +594,7 @@ class InanimateProjectile(pygame.sprite.Sprite):
   def update(self, *args, **kwargs):
     if self.visible:
       self.rect.y += self.speed
-    if self.rect.y > co.SCREEN_HEIGHT:
+    if self.rect.y > co.GAME_AREA_HEIGHT:
       self.visible = False
 
 class AmberBossGoblin(pygame.sprite.Sprite):

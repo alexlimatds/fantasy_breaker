@@ -28,6 +28,40 @@ class Level:
     self.enemies = enemies
     self.blocks = blocks
     self.power_ups = power_ups
+    ## DRAWING AREAS ##
+    self.area_info_bg_color = '0x3d3d42'
+    self.area_info = pygame.Surface((
+      co.SCREEN_WIDHT, 
+      co.INFO_BAR_HEIGHT
+    ))
+    self.area_info.fill(self.area_info_bg_color)
+
+    self.area_game = pygame.Surface((
+      co.SCREEN_WIDHT, 
+      co.GAME_AREA_HEIGHT
+    ))
+    self.area_game.fill((0, 0, 0))
+  
+  def draw_msg(self, surface_txt, vertical_margin = 0):
+    self.area_game.blit(
+      surface_txt, 
+      (
+        co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
+        co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
+      )
+    )
+
+  def draw_txt_level(self, surface_txt):
+    self.area_info.blit(surface_txt, (5, 5))
+
+  def draw_txt_lives(self, surface_txt):
+    self.area_info.blit(
+      surface_txt, 
+      (
+        co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
+        5
+      )
+    )
 
   def run(self):
     '''
@@ -179,34 +213,38 @@ class Level:
             game_state = VICTORY      
 
       ### RENDERING ###
-      self.game.screen.fill((0, 0, 0))
-      self.game.draw_txt_level(txt_level)
-      self.game.draw_txt_lives(txt_lives)
-      all_sprites.draw(self.game.screen)
+      self.area_info.fill(self.area_info_bg_color)
+      self.area_game.fill((0, 0, 0))
+      self.draw_txt_level(txt_level)
+      self.draw_txt_lives(txt_lives)
+      all_sprites.draw(self.area_game)
       if game_state == PAUSED:
-        self.game.draw_msg(txt_paused)
+        self.draw_msg(txt_paused)
       elif game_state == LOST_LIFE:
-        self.game.draw_msg(txt_lost)
+        self.draw_msg(txt_lost)
       elif game_state == GAME_OVER:
-        self.game.draw_msg(txt_game_over)
-        self.game.draw_msg(txt_continue, vertical_margin=30)
+        self.draw_msg(txt_game_over)
+        self.draw_msg(txt_continue, vertical_margin=30)
       elif game_state == ON_START:
-        self.game.draw_msg(txt_start_1)
-        self.game.draw_msg(txt_start_2, vertical_margin=30)
+        self.draw_msg(txt_start_1)
+        self.draw_msg(txt_start_2, vertical_margin=30)
       elif game_state == VICTORY:
-        self.game.draw_msg(txt_victory)
-        self.game.draw_msg(txt_continue, vertical_margin=30)
+        self.draw_msg(txt_victory)
+        self.draw_msg(txt_continue, vertical_margin=30)
+      self.game.screen.blit(self.area_info, (0, 0))
+      self.game.screen.blit(self.area_game, (0, self.area_info.get_rect().h))
+
       pygame.display.flip()
       self.game.clock.tick(45) # FPS
 
 def build_level(label, sprites_matrix, game):
-  # max lines -> 12
+  # max lines -> 11
   # max columns -> 16
   enemies = pygame.sprite.Group()
   blocks = pygame.sprite.Group()
   power_ups = pygame.sprite.Group()
 
-  max_i = (co.SCREEN_HEIGHT - 2 * co.PLAYER_FRAME_DIM) // co.BLOCK_HEIGHT
+  max_i = (co.GAME_AREA_HEIGHT - 2 * co.PLAYER_FRAME_DIM) // co.BLOCK_HEIGHT
   max_j = co.SCREEN_WIDHT // co.BLOCK_WIDTH
   for i, line in enumerate(sprites_matrix):
     if i + 1 > max_i:

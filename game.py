@@ -22,27 +22,6 @@ class Game:
     self.screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
     pygame.display.set_caption("Fantasy Breaker")
     self.clock = pygame.time.Clock()
-
-  def draw_msg(self, surface_txt, vertical_margin = 0):
-    self.screen.blit(
-      surface_txt, 
-      (
-        co.SCREEN_WIDHT / 2 - surface_txt.get_rect().w / 2, 
-        co.SCREEN_HEIGHT / 2 - surface_txt.get_rect().h / 2 + vertical_margin
-      )
-    )
-
-  def draw_txt_level(self, surface_txt):
-    self.screen.blit(surface_txt, (5, 5))
-
-  def draw_txt_lives(self, surface_txt):
-    self.screen.blit(
-      surface_txt, 
-      (
-        co.SCREEN_WIDHT - surface_txt.get_rect().w - 5, 
-        5
-      )
-    )
   
   def start(self):
     levels = [level01.run, level02.run, level03.run, level04.run]
