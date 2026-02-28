@@ -211,7 +211,7 @@ def build_level(label, sprites_matrix, game):
   for i, line in enumerate(sprites_matrix):
     if i + 1 > max_i:
         raise ValueError(f'Matrix with more than {max_i} lines')
-    top_y = i * co.BLOCK_HEIGHT
+    top_y = i * co.BLOCK_HEIGHT + 30
     for j, symbol in enumerate(line):
       if j + 1 > max_j:
         raise ValueError(f'Matrix with more than {max_j} columns')
