@@ -27,5 +27,5 @@ def run(game):
     b.rect.left = i * 62
     blocks.add(b)
   ## RUN LEVEL ##
-  level = lv.Level(2, game, enemies, blocks, None)
+  level = lv.Level("Level 2", game, enemies, blocks, None)
   level.run()

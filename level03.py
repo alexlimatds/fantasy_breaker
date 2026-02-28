@@ -39,5 +39,5 @@ def run(game):
 
   b = None
   ## RUN LEVEL ##
-  level = lv.Level(3, game, enemies, blocks, None)
+  level = lv.Level("Level 3", game, enemies, blocks, None)
   level.run()

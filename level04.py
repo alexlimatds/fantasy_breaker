@@ -89,5 +89,5 @@ def run(game):
   enemy = None
   block = None
   ## RUN LEVEL ##
-  level = lv.Level(4, game, enemies, blocks, power_ups)
+  level = lv.Level("Level 4", game, enemies, blocks, power_ups)
   level.run()

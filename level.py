@@ -16,7 +16,7 @@ def generate_text(font, msg, color, shadow=False):
 
 class Level:
   '''
-  :param label: The number or name of the level.
+  :param label: A text describing the level.
   :param player: An instance of game.Game.
   :param enemies: A pygame.sprite.Group holding the level's enemies.
   :param blocks: A pygame.sprite.Group holding the level's blocks.
@@ -54,7 +54,7 @@ class Level:
     #txt_lost = font_msgs.render("DEFEAT", True, 'red')
     txt_lost = generate_text(font_msgs, 'DEFEAT', 'red', True)
     #txt_level = font_stats.render(f"Level {self.label}", True, 'white')
-    txt_level = generate_text(font_stats, f"Level {self.label}", 'white')
+    txt_level = generate_text(font_stats, f"{self.label}", 'white')
     #txt_victory = font_msgs.render("VICTORY!", True, '0x99369e')
     txt_victory = generate_text(font_msgs, 'VICTORY!', '0x99369e', True)
     #txt_continue = font_stats.render(f"Press ENTER to continue", True, '0x99369e')

@@ -19,5 +19,5 @@ def run(game):
     blocks.add(sprites.BrickBlock(i - 40, y + 100))
     blocks.add(sprites.BrickBlock(i + 40, y + 100))
   ## RUN LEVEL ##
-  level = lv.Level(1, game, enemies, blocks, None)
+  level = lv.Level("Level 1", game, enemies, blocks, None)
   level.run()
