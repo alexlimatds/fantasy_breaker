@@ -161,7 +161,7 @@ class AmberGoblin(pygame.sprite.Sprite):
     self.tick = random.randint(0, 110)
     self.frame_count = random.randint(0, len(self.idle_frames) - 1)
     self.attack = util.create_dagger(self.rect.centerx, self.rect.bottom + 5)
-
+  
   def update(self, *args, **kwargs):
     TICK_ANIMATION = 6
     TICK_PROJECTILE = 120
@@ -195,7 +195,7 @@ class Player(pygame.sprite.Sprite):
     self.rect = self.idle_right_frames[0].get_rect()
     self.lives = lives
     self.speed = 7
-    self.ball_decelerator = 7
+    self.ball_decelerator = 0
     self.bar_extender = 0
     self.magical_bar = magical_bar
     # animation
@@ -709,7 +709,7 @@ class AmberBossGoblin(pygame.sprite.Sprite):
     self.tick_hit -= 1
   
   def collide(self, ball, direction):
-    # this boss is imune to the weak boss
+    # this boss is imune to the weak ball
     if ball.strength > 1:
       self.image = self.red_idle_frames[self.frame_count]
       self.tick_hit = 10
