@@ -503,17 +503,16 @@ class MagicalBar(pygame.sprite.Sprite):
     self.image = self.frames[0]
     self.mask = self.masks[0]
     self.rect = self.image.get_rect()  
-    self.tick = 1
+    self.change_frame_time = pygame.time.get_ticks()
     self.frame_count = 0
     self.angle_pointer = angle_pointer
 
   def update(self, *args, **kwargs):
-    TICK_CHANGE = 12
-    if self.tick == TICK_CHANGE:
-      self.tick = 0
+    now = pygame.time.get_ticks()
+    if now - self.change_frame_time >= 400:
       self.image = self.frames[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
-    self.tick += 1
+      self.change_frame_time = now
   
   def collide(self, ball):
     ball.rect.bottom = self.rect.top - 1
