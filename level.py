@@ -1,5 +1,5 @@
 import pygame, sys
-import sprites, util
+import sprites, util, assets
 import constants as co
 
 def generate_text(font, msg, color, shadow=False):
@@ -13,7 +13,6 @@ def generate_text(font, msg, color, shadow=False):
   else:
     return txt
   
-
 class Level:
   '''
   :param label: A text describing the level.
@@ -42,8 +41,7 @@ class Level:
     ))
     self.area_game.fill((0, 0, 0))
     ## IMAGES ##
-    self.hourglass_img = pygame.image.load(co.HOURGLASS_IMG).convert_alpha()
-    self.hourglass_img = pygame.transform.scale_by(self.hourglass_img, 0.8)
+    self.hourglass_img = pygame.transform.scale_by(assets.HOURGLASS_IMG, 0.8)
     ## FONTS ##
     self.font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
     self.font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)

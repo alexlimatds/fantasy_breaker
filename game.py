@@ -1,4 +1,4 @@
-import pygame, util
+import pygame, util, assets
 import constants as co
 import level01, level02, level03, level04
 
@@ -22,6 +22,7 @@ class Game:
     self.screen = pygame.display.set_mode((co.SCREEN_WIDHT, co.SCREEN_HEIGHT))
     pygame.display.set_caption("Fantasy Breaker")
     self.clock = pygame.time.Clock()
+    assets.init()
   
   def start(self):
     levels = [level01.run, level02.run, level03.run, level04.run]
