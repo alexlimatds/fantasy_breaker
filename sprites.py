@@ -195,7 +195,7 @@ class Player(pygame.sprite.Sprite):
     self.rect = self.idle_right_frames[0].get_rect()
     self.lives = lives
     self.speed = 7
-    self.ball_decelerator = 0
+    self.ball_decelerator = 7
     self.bar_extender = 0
     self.magical_bar = magical_bar
     # animation
@@ -250,13 +250,18 @@ class Player(pygame.sprite.Sprite):
       self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
   
   def slow_down_ball(self, ball):
-    # TODO dont activate power up if it is already active
-    if self.ball_decelerator > 0:
+    if (
+      self.ball_decelerator > 0 and 
+      ball.speed != ball.LOW_SPEED
+    ):
       self.ball_decelerator -= 1
       ball.slow_down()
   
   def enlarge_bar(self):
-    if not self.magical_bar.is_enlarged() and self.bar_extender > 0:
+    if (
+      not self.magical_bar.is_enlarged() and 
+      self.bar_extender > 0
+    ):
       self.bar_extender -= 1
       self.magical_bar.enlarge()
 
