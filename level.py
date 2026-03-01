@@ -42,6 +42,7 @@ class Level:
     self.area_game.fill((0, 0, 0))
     ## IMAGES ##
     self.hourglass_img = pygame.transform.scale_by(assets.HOURGLASS_IMG, 0.8)
+    self.bar_extender_img = assets.BAR_EXTENDER_SHEET[0]
     ## FONTS ##
     self.font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
     self.font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)
@@ -72,6 +73,13 @@ class Level:
     txt = generate_text(self.font_stats, f'Z: {self.game.player.ball_decelerator}', 'white')
     x += 30
     self.area_info.blit(txt, (x, 5))
+    # Bar extender power up
+    x += 50
+    self.area_info.blit(self.bar_extender_img, (x, 0))
+    txt = generate_text(self.font_stats, f'X: {self.game.player.bar_extender}', 'white')
+    x += 45
+    self.area_info.blit(txt, (x, 5))
+
 
   def run(self):
     '''

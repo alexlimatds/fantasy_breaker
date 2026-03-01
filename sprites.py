@@ -196,6 +196,7 @@ class Player(pygame.sprite.Sprite):
     self.lives = lives
     self.speed = 7
     self.ball_decelerator = 0
+    self.bar_extender = 0
     self.magical_bar = magical_bar
     # animation
     self.IDLE_RIGHT = 0
