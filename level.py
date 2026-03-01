@@ -145,6 +145,8 @@ class Level:
               angle_pointer.decrease_angle()
             if event.key == pygame.K_z:
               player.slow_down_ball(ball)
+            if event.key == pygame.K_x:
+              player.enlarge_bar()
         elif event.type == pygame.KEYUP:
           if (event.key == pygame.K_LEFT and player.state == player.RUNNING_LEFT) or \
             (event.key == pygame.K_RIGHT and player.state == player.RUNNING_RIGHT):
@@ -281,5 +283,7 @@ def build_level(label, sprites_matrix, game):
         power_ups.add(sprites.GreenCrystal(midtop=(center_x, top_y)))
       elif symbol == 'HG':
         power_ups.add(sprites.Hourglass(midtop=(center_x, top_y)))
+      elif symbol == 'BE':
+        power_ups.add(sprites.BarExtender(midtop=(center_x, top_y)))
   
   return Level(label, game, enemies, blocks, power_ups)

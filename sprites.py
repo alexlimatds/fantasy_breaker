@@ -250,9 +250,15 @@ class Player(pygame.sprite.Sprite):
       self.move_to(co.SCREEN_WIDHT - self.rect.w, y)
   
   def slow_down_ball(self, ball):
+    # TODO dont activate power up if it is already active
     if self.ball_decelerator > 0:
       self.ball_decelerator -= 1
       ball.slow_down()
+  
+  def enlarge_bar(self):
+    if not self.magical_bar.is_enlarged() and self.bar_extender > 0:
+      self.bar_extender -= 1
+      self.magical_bar.enlarge()
 
   def update(self, *args, **kwargs):
     TICK_CHANGE = 6
@@ -495,28 +501,84 @@ class Arena:
 class MagicalBar(pygame.sprite.Sprite):
   def __init__(self, angle_pointer):
     pygame.sprite.Sprite.__init__(self)
+    # Loading frames
+    # The bar has three possible widths: standard, large and small.
+    # Thus, there are three sets of frames and three masks.
     FRAME_WIDTH = 90
     FRAME_HEIGHT = 7
-    self.frames = util.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
-    self.frames = [pygame.transform.scale(f, (co.PLAYER_FRAME_DIM, FRAME_HEIGHT)) for f in self.frames]
-    self.masks = [pygame.mask.from_surface(img) for img in self.frames]
+    original_frames = util.load_grid_images('assets/magical_bar_sheet.png', FRAME_WIDTH, FRAME_HEIGHT, 4, 1)
+    self.standard_frames = [pygame.transform.scale(f, (co.PLAYER_FRAME_DIM, FRAME_HEIGHT)) for f in original_frames]
+    self.small_frames = [pygame.transform.scale(f, (co.PLAYER_FRAME_DIM * 0.65, FRAME_HEIGHT)) for f in original_frames]
+    self.large_frames = [pygame.transform.scale(f, (co.PLAYER_FRAME_DIM * 1.35, FRAME_HEIGHT)) for f in original_frames]
+    self.standard_masks = [pygame.mask.from_surface(img) for img in self.standard_frames]
+    self.large_masks = [pygame.mask.from_surface(img) for img in self.large_frames]
+    self.small_masks = [pygame.mask.from_surface(img) for img in self.small_frames]
+    # initial state
+    self.frames = self.standard_frames
+    self.masks = self.standard_masks
     self.image = self.frames[0]
     self.mask = self.masks[0]
-    self.rect = self.image.get_rect()  
+    self.rect = self.image.get_rect()
     self.change_frame_time = pygame.time.get_ticks()
+    self.change_size_time = pygame.time.get_ticks()
     self.frame_count = 0
     self.angle_pointer = angle_pointer
 
   def update(self, *args, **kwargs):
     now = pygame.time.get_ticks()
-    if now - self.change_frame_time >= 400:
+    if now - self.change_frame_time >= 300:
       self.image = self.frames[self.frame_count]
+      self.mask = self.masks[self.frame_count]
       self.frame_count = (self.frame_count + 1) % len(self.frames)
       self.change_frame_time = now
+    if (
+      (self.is_enlarged() or self.is_shortened()) and 
+      now - self.change_size_time >= 3500
+    ):
+      self.to_standard_width()
   
   def collide(self, ball):
     ball.rect.bottom = self.rect.top - 1
     ball.set_angle(self.angle_pointer.angle)
+  
+  def to_standard_width(self):
+    if self.is_enlarged() or self.is_shortened():
+      self.frames = self.standard_frames
+      self.masks = self.standard_masks
+      self.image = self.frames[0]
+      self.mask = self.masks[0]
+      position = self.rect.midtop
+      self.rect = self.image.get_rect()
+      self.rect.midtop = position
+      self.change_size_time = pygame.time.get_ticks()
+
+  def enlarge(self):
+    if not self.is_enlarged():
+      self.frames = self.large_frames
+      self.masks = self.large_masks
+      self.image = self.frames[0]
+      self.mask = self.masks[0]
+      position = self.rect.midtop
+      self.rect = self.image.get_rect()
+      self.rect.midtop = position
+      self.change_size_time = pygame.time.get_ticks()
+  
+  def is_enlarged(self):
+    return self.frames == self.large_frames
+
+  def shorten(self):
+    if not self.is_shortened():
+      self.frames = self.small_frames
+      self.masks = self.small_masks
+      self.image = self.frames[0]
+      self.mask = self.masks[0]
+      position = self.rect.midtop
+      self.rect = self.image.get_rect()
+      self.rect.midtop = position
+      self.change_size_time = pygame.time.get_ticks()
+
+  def is_shortened(self):
+    return self.frames == self.small_frames
 
 class AnglePointer(pygame.sprite.Sprite):
   def __init__(self):
@@ -732,3 +794,34 @@ class Hourglass(pygame.sprite.Sprite):
         s.ball_decelerator += 1
         self.kill()
         return
+
+class BarExtender(pygame.sprite.Sprite):
+  def __init__(self, topleft=None, midtop=None):
+    pygame.sprite.Sprite.__init__(self)
+    self.frames = assets.BAR_EXTENDER_SHEET
+    self.masks = [pygame.mask.from_surface(f) for f in self.frames]
+    self.image = self.frames[0]
+    self.mask = self.masks[0]
+    self.rect = self.image.get_rect()
+    if topleft:
+      self.rect.topleft = topleft
+    if midtop:
+      self.rect.midtop = midtop
+    # animation
+    self.change_frame_time = pygame.time.get_ticks()
+    self.frame_count = 0
+
+  def collide(self, sprites):
+    for s in sprites:
+      if isinstance (s, Player):
+        s.bar_extender += 1
+        self.kill()
+        return
+  
+  def update(self, *args, **kwargs):
+    now = pygame.time.get_ticks()
+    if now - self.change_frame_time >= 400:
+      self.image = self.frames[self.frame_count]
+      self.mask = self.masks[self.frame_count]
+      self.frame_count = (self.frame_count + 1) % len(self.frames)
+      self.change_frame_time = now
