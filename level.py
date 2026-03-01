@@ -43,6 +43,7 @@ class Level:
     self.area_game.fill((0, 0, 0))
     ## IMAGES ##
     self.hourglass_img = pygame.image.load(co.HOURGLASS_IMG).convert_alpha()
+    self.hourglass_img = pygame.transform.scale_by(self.hourglass_img, 0.8)
     ## FONTS ##
     self.font_msgs = pygame.font.Font('assets/alagard.ttf', 40)
     self.font_stats = pygame.font.Font('assets/LGGothic.ttf', 20)
@@ -68,9 +69,8 @@ class Level:
       )
     )
     # Ball decelerator power-up
-    icon = pygame.transform.scale_by(self.hourglass_img, 0.8)
     x = 130
-    self.area_info.blit(icon, (x, 3))
+    self.area_info.blit(self.hourglass_img, (x, 3))
     txt = generate_text(self.font_stats, f'Z: {self.game.player.ball_decelerator}', 'white')
     x += 30
     self.area_info.blit(txt, (x, 5))
